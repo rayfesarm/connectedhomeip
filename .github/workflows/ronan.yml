@@ -1,26 +1,10 @@
 # example workflow to control Arm Virtual Hardware
 
-# Cancel all previous workflows
-# https://github.com/marketplace/actions/cancel-all-previous-workflow-runs
-name: Cancel
-on: push
-jobs:
-  cancel:
-    name: Cancel Previous Runs
-    runs-on: ubuntu-latest
-    steps:
-      - name: cancel running workflows
-        uses: everphone-gmbh/cancel-previous-workflows@v5
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-
-
 name: AVH_RPi4_Matter
 
 # Controls when the workflow will run
 on:
   workflow_dispatch:
-    branches: [ main ]
 #  push:
 #    branches: [ main ]
 #  pull_request:
