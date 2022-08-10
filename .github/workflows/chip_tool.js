@@ -1,6 +1,9 @@
 const readline = require('readline')
 const { ArmApi, ApiClient } = require('@arm-avh/avh-api');
 
+const BearerAuth = ApiClient.instance.authentications['BearerAuth']
+const api = new ArmApi()
+
 const path = require("path");
 const fs = require("fs");
 
