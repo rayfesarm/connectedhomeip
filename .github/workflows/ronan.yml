@@ -31,7 +31,8 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Run lighting-app for 1 minute
-        timeout-minutes: 1
+#        timeout-minutes: 1
         run: |
           cd /home/pi/connectedhomeip/examples/lighting-app/linux
-          ./out/debug/chip-lighting-app
+          timeout 60s ./out/debug/chip-lighting-app || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi         
+# https://stackoverflow.com/questions/63641822/run-command-with-timeout-in-github-workflow
