@@ -49,8 +49,5 @@ jobs:
           node-version: 14.17.2
       - name: Install  API
         run: npm install @arm-avh/avh-api --save
-#      - name: Run script
-#        env:
-#            AVH_USERNAME: ${{ secrets.AVH_USERNAME }}
-#            AVH_PASSWORD: ${{ secrets.AVH_PASSWORD }}
-#        run: node .github/workflows/chip_tool.js
+      - name: Run script
+        run: node .github/workflows/chip_tool.js
