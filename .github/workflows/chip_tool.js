@@ -19,22 +19,14 @@ async function main() {
   let project = projects[0];
 	
   console.log("Getting Chip Tool instance...");
-  let rpi_instance = await api.v1GetInstance({
-	  name: "Chip Tool",
-  })
-  
-  console.log("Wait for instance to be on");
-  await rpi_instance.waitForState('on');
+  let instances = await api.v1GetInstances()
+  let instance = instances[0];
 
 // Print dump of the device console log
     console.log("Console output:\n");
-    let data = await rpi_instance.consoleLog();
+    let data = await instance.v1consoleLog();
     console.log(data);
-    
-    // Delete instance
-    // console.log('Deleting the instance...');
-    // instance.destroy();
-    
+       
     console.log('Run completed');
     return;
 }
