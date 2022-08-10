@@ -17,12 +17,14 @@ async function main() {
   console.log('Listing projects...');
   let projects = await api.v1GetProjects();
   let project = projects[0];
-
-	console.log("Getting Chip Tool instance...");
-  let rpi_instance = instances.find((instance) => instance.name === "Chip Tool");
-
-	console.log("Wait for instance to be on");
-         await rpi_instance.waitForState('on');
+	
+  console.log("Getting Chip Tool instance...");
+  let rpi_instance = await api.v1GetInstance({
+	  name: "Chip Tool",
+  })
+  
+  console.log("Wait for instance to be on");
+  await rpi_instance.waitForState('on');
 
 // Print dump of the device console log
     console.log("Console output:\n");
