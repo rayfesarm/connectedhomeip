@@ -27,7 +27,7 @@ jobs:
 #          ninja -C out/debug
 
   run_lighting_app:
-    needs: build_lighting_app
+#    needs: build_lighting_app
     runs-on: self-hosted
     steps:
       - name: Run lighting-app for 60 seconds
