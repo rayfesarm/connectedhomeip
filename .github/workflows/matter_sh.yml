@@ -11,28 +11,32 @@ on:
 #    branches: [ main ]
 
 jobs:
-#  build_lighting_app:
-#    runs-on: self-hosted
-#    steps:
-#      - name: Navigate to install dir and pull latest
-#        run: |
-#          cd /home/pi/connectedhomeip/examples/lighting-app/linux
-#          git pull
-#          
-#      - name: Rebuild lighting-app
-#        run: |
-#          cd /home/pi/connectedhomeip/examples/lighting-app/linux
-#          pwd
-#          gn gen out/debug
-#          ninja -C out/debug
+  matter_setup:
+    runs-on: self-hosted
+    steps:
+     - uses: actions/checkout@v2
+     - name: submodules
+       run: ./scripts/checkout_submodules.py --shallow --platform linux
+     - name: bootstrap
+       run: source scripts/activate.sh
+       
+  build_lighting_app:
+    needs: matter_setup
+    runs-on: self-hosted
+    steps:
+      - name: Rebuild lighting-app
+        run: |
+          cd examples/lighting-app/linux
+          gn gen out/debug
+          ninja -C out/debug
 
   run_lighting_app:
-#    needs: build_lighting_app
+    needs: build_lighting_app
     runs-on: self-hosted
     steps:
       - name: Run lighting-app for 1 minute
-# https://stackoverflow.com/questions/63641822/run-command-with-timeout-in-github-workflow
         run: |
           cd /home/pi/connectedhomeip/examples/lighting-app/linux
           timeout 60s ./out/debug/chip-lighting-app || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi         
 
+# https://stackoverflow.com/questions/63641822/run-command-with-timeout-in-github-workflow
