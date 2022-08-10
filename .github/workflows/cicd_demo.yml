@@ -10,7 +10,7 @@ on:
 #    branches: [ main ]
 
 jobs:
-  matter_setup:
+  rebuild_lighting_app:
     runs-on: self-hosted
     steps:
      - uses: actions/checkout@v2
@@ -28,7 +28,7 @@ jobs:
          ninja -C out/debug
 
   run_lighting_app:
-    needs: matter_setup
+    needs: rebuild_lighting_app
     runs-on: self-hosted
     steps:
       - name: Run lighting-app for 1 minute
@@ -36,3 +36,21 @@ jobs:
           cd examples/lighting-app/linux
           pwd
           timeout 60s ./out/debug/chip-lighting-app || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi
+
+  chip_tool:
+    needs: rebuild_lighting_app
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - name: Install Node
+        uses: actions/setup-node@aa759c6c94d3800c55b8601f21ba4b2371704cb7
+        with:
+          node-version: 14.17.2
+      - name: Install  API
+        run: npm install @arm-avh/avh-api --save
+#      - name: Run script
+#        env:
+#            AVH_USERNAME: ${{ secrets.AVH_USERNAME }}
+#            AVH_PASSWORD: ${{ secrets.AVH_PASSWORD }}
+#        run: node .github/workflows/chip_tool.js
