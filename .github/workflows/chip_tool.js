@@ -24,8 +24,7 @@ async function main() {
 
 // Get Websocket
     console.log("Websocket...");
-    let urls = await api.instance.v1console();
-    let url = urls[0]
+    let url = await api.instance.v1console();
     mySocket = new WebSocket(url);
     mySocket.send("Hello Chip Tool!");
            
