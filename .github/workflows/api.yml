@@ -24,5 +24,6 @@ jobs:
       - name: Run script
         env:
           API_TOKEN: ${{ secrets.API_TOKEN }}
-        run: node .github/workflows/create-vm.js
-#        run: node .github/workflows/chip_tool.js
+        run: node .github/workflows/chip_tool.js
+        # run: node .github/workflows/create-vm.js
+
