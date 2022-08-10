@@ -18,7 +18,9 @@ jobs:
      - name: submodules
        run: ./scripts/checkout_submodules.py --shallow --platform linux
      - name: bootstrap
-       run: source scripts/activate.sh
+       run: |
+         ./scripts/build/gn_bootstrap.sh
+         source scripts/activate.sh
        
   build_lighting_app:
     needs: matter_setup
