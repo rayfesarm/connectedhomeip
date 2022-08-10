@@ -26,6 +26,7 @@ jobs:
           
       - name: Rebuild lighting-app
         run: |
+          cd /home/pi/connectedhomeip/examples/lighting-app/linux
           gn gen out/debug
           ninja -C out/debug
 
