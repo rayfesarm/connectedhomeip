@@ -1,0 +1,25 @@
+# example workflow to manage Arm Virtual Hardware with Self-Hosted Runner
+name: API_testing
+
+# When the workflow will run
+on:
+  workflow_dispatch:
+#  push:
+#    branches: [ main ]
+#  pull_request:
+#    branches: [ main ]
+
+jobs:
+  chip_tool:
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - name: Install Node
+        uses: actions/setup-node@aa759c6c94d3800c55b8601f21ba4b2371704cb7
+        with:
+          node-version: 14.17.2
+      - name: Install  API
+        run: npm install @arm-avh/avh-api --save
+      - name: Run script
+        run: node .github/workflows/chip_tool.js
