@@ -1,8 +1,7 @@
-# example workflow to control Arm Virtual Hardware
-
+# example workflow to manage Arm Virtual Hardware with Self-Hosted Runner
 name: AVH_RPi4_Matter
 
-# Controls when the workflow will run
+# When the workflow will run
 on:
   workflow_dispatch:
 #  push:
@@ -15,17 +14,20 @@ jobs:
     runs-on: self-hosted
     steps:
      - uses: actions/checkout@v2
+     
      - name: submodules
        run: ./scripts/checkout_submodules.py --shallow --platform linux
+       
      - name: bootstrap
        run: |
          ./scripts/build/gn_bootstrap.sh
          source scripts/activate.sh
-      - name: Rebuild lighting-app
-        run: |
-          cd examples/lighting-app/linux
-          gn gen out/debug
-          ninja -C out/debug
+         
+     - name: Rebuild lighting-app
+       run: |
+         cd examples/lighting-app/linux
+         gn gen out/debug
+         ninja -C out/debug
        
 #  build_lighting_app:
 #    needs: matter_setup
