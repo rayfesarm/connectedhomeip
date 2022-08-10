@@ -22,10 +22,10 @@ async function main() {
   let instances = await api.v1GetInstances()
   let instance = instances[0];
 
-// Print dump of the device console log
-    console.log("Console output:\n");
-    let data = await instance.v1consoleLog();
-    console.log(data);
+// Get Websocket
+    console.log("Websocket...:\n");
+    let socket = await api.instance.v1consoleLog();
+    console.log(socket);
        
     console.log('Run completed');
     return;
