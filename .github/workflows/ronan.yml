@@ -1,0 +1,48 @@
+# example workflow to control Arm Virtual Hardware
+
+# Cancel all previous workflows
+# https://github.com/marketplace/actions/cancel-all-previous-workflow-runs
+name: Cancel
+on: push
+jobs:
+  cancel:
+    name: Cancel Previous Runs
+    runs-on: ubuntu-latest
+    steps:
+      - name: cancel running workflows
+        uses: everphone-gmbh/cancel-previous-workflows@v5
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+
+name: AVH_RPi4_Matter
+
+# Controls when the workflow will run
+on:
+  workflow_dispatch:
+    branches: [ main ]
+#  push:
+#    branches: [ main ]
+#  pull_request:
+#    branches: [ main ]
+
+
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: self-hosted
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - name: Install Node
+        uses: actions/setup-node@aa759c6c94d3800c55b8601f21ba4b2371704cb7
+        with:
+          node-version: 14.17.2
+
+      - name: Install Corellium API
+        run: npm install @corellium/corellium-api
