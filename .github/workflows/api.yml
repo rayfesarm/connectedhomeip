@@ -22,4 +22,5 @@ jobs:
       - name: Install  API
         run: npm install @arm-avh/avh-api --save
       - name: Run script
-        run: node .github/workflows/chip_tool.js
+#        run: node .github/workflows/chip_tool.js
+        run: node .github/workflows/create-vm.js
