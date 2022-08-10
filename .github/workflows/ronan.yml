@@ -5,8 +5,8 @@ name: AVH_RPi4_Matter
 # Controls when the workflow will run
 on:
   workflow_dispatch:
-#  push:
-#    branches: [ main ]
+  push:
+    branches: [ main ]
 #  pull_request:
 #    branches: [ main ]
 
@@ -30,7 +30,8 @@ jobs:
 #    needs: build_lighting_app
     runs-on: self-hosted
     steps:
-      - name: Run lighting-app for 60 seconds
+      - name: Run lighting-app for 1 minute
+        timeout-minutes: 1
         run: |
           cd /home/pi/connectedhomeip/examples/lighting-app/linux
-          timeout 60s ./out/debug/chip-lighting-app
+          ./out/debug/chip-lighting-app
