@@ -10,26 +10,21 @@ on:
 #  pull_request:
 #    branches: [ main ]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build_lighting_app:
-    # The type of runner that the job will run on
-    runs-on: self-hosted
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      - name: Navigate to install dir and pull latest
-        run: |
-          cd /home/pi/connectedhomeip/examples/lighting-app/linux
-          git pull
-          
-      - name: Rebuild lighting-app
-        run: |
-          cd /home/pi/connectedhomeip/examples/lighting-app/linux
-          pwd
-          gn gen out/debug
-          ninja -C out/debug
+#  build_lighting_app:
+#    runs-on: self-hosted
+#    steps:
+#      - name: Navigate to install dir and pull latest
+#        run: |
+#          cd /home/pi/connectedhomeip/examples/lighting-app/linux
+#          git pull
+#          
+#      - name: Rebuild lighting-app
+#        run: |
+#          cd /home/pi/connectedhomeip/examples/lighting-app/linux
+#          pwd
+#          gn gen out/debug
+#          ninja -C out/debug
 
   run_lighting_app:
     needs: build_lighting_app
