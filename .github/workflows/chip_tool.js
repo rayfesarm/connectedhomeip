@@ -1,11 +1,38 @@
-var AvhApi = require('@arm-avh/avh-api');
+const readline = require('readline')
+const { ArmApi, ApiClient } = require('@arm-avh/avh-api');
 
-var api = new AvhApi.ArmApi()
-var apiToken = {
-  "apiToken": "71819844e83655e4131c.90b2b6b6dc26b791ac7df5c5a9db36651ca10172d24a80a4e13cf217c4a5748e530c73525e9a7a446a91c63a7216dee29520d7ab8a86449cc62ba02b45f0e3c1"
-}; // {ApiToken} Authorization Data
-api.v1AuthLogin(apiToken).then(function(data) {
-  console.log('API called successfully. Returned data: ' + data);
-}, function(error) {
-  console.error(error);
+const path = require("path");
+const fs = require("fs");
+
+async function main() {
+  const apiToken = process.env.API_TOKEN || await prompt('Please enter AVH API Token: ')
+
+  console.log('Logging in...');
+  const authInfo = await api.v1AuthLogin({ apiToken });
+  BearerAuth.accessToken = authInfo.token
+  
+  console.log('Listing projects...');
+  let projects = await api.v1GetProjects();
+  let project = projects[0];
+
+	console.log("Getting Chip Tool instance...");
+  let rpi_instance = instances.find((instance) => instance.name === "Chip Tool");
+
+	console.log("Wait for instance to be on");
+         await rpi_instance.waitForState('on');
+
+// Print dump of the device console log
+    console.log("Console output:\n");
+    let data = await rpi_instance.consoleLog();
+    console.log(data);
+    
+    // Delete instance
+    // console.log('Deleting the instance...');
+    // instance.destroy();
+    
+    console.log('Run completed');
+    return;
+}
+main().catch((err) => {
+    console.error(err);
 });
