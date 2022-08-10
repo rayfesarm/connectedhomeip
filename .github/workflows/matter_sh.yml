@@ -22,11 +22,14 @@ jobs:
        run: |
          ./scripts/build/gn_bootstrap.sh
          source scripts/activate.sh
+         export PATH="/home/pi/connectedhomeip/.environment/cipd/packages/pigweed:$PATH"
+         echo $PATH
 
 # This step is not working - does not understand gn command..?
      - name: Rebuild lighting-app
        run: |
          cd examples/lighting-app/linux
+         echo $PATH
          gn gen out/debug
          ninja -C out/debug
        
