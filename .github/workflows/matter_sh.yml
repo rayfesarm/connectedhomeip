@@ -18,43 +18,20 @@ jobs:
      - name: submodules
        run: ./scripts/checkout_submodules.py --shallow --platform linux
        
-     - name: bootstrap
+     - name: bootstrap and build
        run: |
          ./scripts/build/gn_bootstrap.sh
          source scripts/activate.sh
-         echo $PATH
          cd examples/lighting-app/linux
          echo $PATH
          gn gen out/debug
          ninja -C out/debug
-
-#         export PATH="/home/pi/connectedhomeip/.environment/cipd/packages/pigweed:$PATH"
-# This step is not working - does not understand gn command..?
-     - name: Rebuild lighting-app
-       run: |
-         cd examples/lighting-app/linux
-         echo $PATH
-         gn gen out/debug
-         ninja -C out/debug
-       
-#  build_lighting_app:
-#    needs: matter_setup
-#    runs-on: self-hosted
-#    steps:
-#      - name: Rebuild lighting-app
-#        run: |
-#          cd examples/lighting-app/linux
-#          gn gen out/debug
-#          ninja -C out/debug
 
   run_lighting_app:
-#    needs: build_lighting_app
     needs: matter_setup
     runs-on: self-hosted
     steps:
       - name: Run lighting-app for 1 minute
         run: |
           pwd
-          timeout 60s ./out/debug/chip-lighting-app || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi         
-
-# https://stackoverflow.com/questions/63641822/run-command-with-timeout-in-github-workflow
+          timeout 60s ./out/debug/chip-lighting-app || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi
