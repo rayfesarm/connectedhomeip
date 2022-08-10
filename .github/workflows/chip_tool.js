@@ -23,10 +23,12 @@ async function main() {
   let instance = instances[0];
 
 // Get Websocket
-    console.log("Websocket...:\n");
-    let socket = await api.instance.v1consoleLog();
-    console.log(socket);
-       
+    console.log("Websocket...");
+    let urls = await api.v1console();
+    let url = urls[0]
+    mySocket = new WebSocket(url);
+    mySocket.send("Hello Chip Tool!");
+           
     console.log('Run completed');
     return;
 }
