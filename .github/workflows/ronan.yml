@@ -10,27 +10,30 @@ on:
 #  pull_request:
 #    branches: [ main ]
 
-
-
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
-  build:
+  build_lighting_app:
     # The type of runner that the job will run on
     runs-on: self-hosted
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-#      - uses: actions/checkout@v2
-      - name: Install Node
-        uses: actions/setup-node@aa759c6c94d3800c55b8601f21ba4b2371704cb7
-        with:
-          node-version: 14.17.2
+      - name: Navigate to install dir and pull latest
+        run: |
+          cd /home/pi/connectedhomeip/examples/lighting-app/linux
+          git pull
+          
+      - name: Rebuild lighting-app
+        run: |
+          gn gen out/debug
+          ninja -C out/debug
 
-      - name: Install Corellium API
-        run: npm install @corellium/corellium-api
-
-      - name: Where am I?
-        run: pwd
-        
+  run_lighting_app:
+    needs: build_lighting_app
+    runs-on: self-hosted
+    steps:
+      - name: Run lighting-app for 60 seconds
+        run: |
+          cd /home/pi/connectedhomeip/examples/lighting-app/linux
+          timeout 60s ./out/debug/chip-lighting-app
