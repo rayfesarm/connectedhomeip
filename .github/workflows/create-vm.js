@@ -35,8 +35,8 @@ async function waitForState (instance, callback) {
 }
 
 async function main() {
-  const apiToken = process.env.API_TOKEN || await prompt('Please enter AVH API Token: ')
-
+  const apiToken = process.env.API_TOKEN
+  
   console.log('Logging in...');
   const authInfo = await api.v1AuthLogin({ apiToken });
   BearerAuth.accessToken = authInfo.token
