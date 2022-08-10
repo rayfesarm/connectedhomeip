@@ -22,7 +22,8 @@ jobs:
        run: |
          ./scripts/build/gn_bootstrap.sh
          source scripts/activate.sh
-         
+
+# This step is not working - does not understand gn command..?
      - name: Rebuild lighting-app
        run: |
          cd examples/lighting-app/linux
