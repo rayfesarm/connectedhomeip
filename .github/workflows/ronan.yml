@@ -22,7 +22,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+#      - uses: actions/checkout@v2
       - name: Install Node
         uses: actions/setup-node@aa759c6c94d3800c55b8601f21ba4b2371704cb7
         with:
@@ -30,3 +30,7 @@ jobs:
 
       - name: Install Corellium API
         run: npm install @corellium/corellium-api
+
+      - name: Where am I?
+        run: pwd
+        
