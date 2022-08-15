@@ -8,7 +8,7 @@ const path = require("path");
 const fs = require("fs");
 
 async function main() {
-    const apiToken = process.env.API_TOKEN || await prompt('Please enter AVH API Token: ')
+    const apiToken = process.env.API_TOKEN
     
     console.log('Logging in...');
     const authInfo = await api.v1AuthLogin({ apiToken });
@@ -30,6 +30,9 @@ async function main() {
     mySocket.send("This is a test");
 
 /*
+    console.log("Wait for chip-lighting-app to initialize...");
+    await delay(10000);
+    
     for(let loop=0; loop<5; loop++>){
         console.log("Turn light on...");
         mySocket.send("./out/debug/chip-tool onoff on 0x11 1");
