@@ -5,9 +5,6 @@ const W3CWebSocket = require('websocket').w3cwebsocket;
 const BearerAuth = ApiClient.instance.authentications['BearerAuth']
 const api = new ArmApi()
 
-// const path = require("path");
-// const fs = require("fs");
-
 function delay(time) {
 	return new Promise(resolve => setTimeout(resolve, time));
 }
