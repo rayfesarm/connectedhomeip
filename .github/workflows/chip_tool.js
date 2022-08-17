@@ -23,7 +23,7 @@ async function main() {
     let instance = instances[0];
     
     console.log("Get Websocket...");
-    let url = await api.instance.v1console();
+    let url = await api.{instance}.v1console();
     mySocket = new WebSocket(url);
 	
     console.log("Testing...");
