@@ -4,9 +4,9 @@ name: Matter_CICD_Demo
 
 # When the workflow will run
 on:
-  workflow_dispatch:
   push:
     branches: [ master ]
+  workflow_dispatch:
 
 jobs:
   rebuild_lighting_app:
