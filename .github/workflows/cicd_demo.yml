@@ -36,3 +36,17 @@ jobs:
           cd examples/lighting-app/linux
           timeout 120s ./out/debug/chip-lighting-app || code=$?; if [[ $code -ne 124 && $code -ne 0 ]]; then exit $code; fi
 
+  chip_tool:
+    needs: rebuild_lighting_app
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Node
+        uses: actions/setup-node@aa759c6c94d3800c55b8601f21ba4b2371704cb7
+
+      - name: Install AVH API and Websocket
+        run: npm install @arm-avh/avh-api websocket --save
+      - name: Run script
+        env:
+          API_TOKEN: ${{ secrets.API_TOKEN }}
+        run: node .github/workflows/chip_tool.js
