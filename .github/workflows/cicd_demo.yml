@@ -46,6 +46,7 @@ jobs:
 
       - name: Install AVH API and Websocket
         run: npm install @arm-avh/avh-api websocket --save
+
       - name: Run script
         env:
           API_TOKEN: ${{ secrets.API_TOKEN }}
