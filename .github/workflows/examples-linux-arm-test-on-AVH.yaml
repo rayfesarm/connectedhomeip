@@ -1,0 +1,234 @@
+# Copyright (c) 2020 Project CHIP Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Build example - Linux ARM
+
+on:
+    # push:
+    # pull_request:
+    workflow_dispatch:
+
+concurrency:
+    group: ${{ github.ref }}-${{ github.workflow }}-${{ (github.event_name == 'pull_request' && github.event.number) || (github.event_name == 'workflow_dispatch' && github.run_number) || github.sha }}
+    cancel-in-progress: true
+
+jobs:
+    # arm_crosscompile:
+    #     name: Linux ARM Cross compile
+    #     timeout-minutes: 70
+
+    #     runs-on: ubuntu-latest
+    #     if: github.actor != 'restyled-io[bot]'
+
+    #     # container:
+    #     #     image: connectedhomeip/chip-build-crosscompile:0.5.79
+    #     #     volumes:
+    #     #         - "/tmp/bloat_reports:/tmp/bloat_reports"
+
+    #     # steps:
+    #     #     - uses: Wandalen/wretry.action@v1.0.15
+    #     #       name: Checkout
+    #     #       with:
+    #     #           action: actions/checkout@v3
+    #     #           with: |
+    #     #               token: ${{ github.token }}
+    #     #           attempt_limit: 3
+    #     #           attempt_delay: 2000
+    #     #     - name: Checkout submodules
+    #     #       run: scripts/checkout_submodules.py --shallow --platform linux
+
+    #     #     - name: Set up environment for size reports
+    #     #       if: ${{ !env.ACT }}
+    #     #       env:
+    #     #           GH_CONTEXT: ${{ toJson(github) }}
+    #     #       run: scripts/tools/memory/gh_sizes_environment.py "${GH_CONTEXT}"
+
+    #     #     - name: Bootstrap
+    #     #       timeout-minutes: 10
+    #     #       run: scripts/build/gn_bootstrap.sh
+    #     #     - name: Uploading bootstrap logs
+    #     #       uses: actions/upload-artifact@v2
+    #     #       if: ${{ always() }} && ${{ !env.ACT }}
+    #     #       with:
+    #     #           name: bootstrap-logs
+    #     #           path: |
+    #     #               .environment/gn_out/.ninja_log
+    #     #               .environment/pigweed-venv/*.log
+    #     #     - name: Build Some samples
+    #     #       timeout-minutes: 45
+    #     #       run: |
+    #     #           ./scripts/run_in_build_env.sh \
+    #     #              "./scripts/build/build_examples.py \
+    #     #                 --target linux-arm64-chip-tool-no-interactive \
+    #     #                 --target linux-arm64-light \
+    #     #                 build \
+    #     #              "              
+    #     #           #      --target linux-arm64-chip-tool-no-interactive \                                                                      
+    #     #     - name: upload-light
+    #     #       uses: actions/upload-artifact@master
+    #     #       with:
+    #     #             name: lighting-app
+    #     #             path: ${{ github.workspace }}/out/linux-arm64-light/chip-lighting-app
+    #     #             #path: out/linux-arm64-light/chip-lighting-app
+    #     #     - name: upload-tool
+    #     #       uses: actions/upload-artifact@master
+    #     #       with:
+    #     #             name: chip-tool
+    #     #             path: ${{ github.workspace }}/out/linux-arm64-chip-tool-no-interactive/chip-tool
+    virtual-device-test:
+        runs-on: ubuntu-latest
+        env:
+          INSTANCE1: chip-tool
+          INSTANCE2: chip-lighting-app
+          ENDPOINT: https://app.avh.arm.com/api   
+          API_TOKEN: ${{ secrets.API_TOKEN }}   
+        steps:
+          - name: pull tests
+            uses: actions/checkout@v2
+          # - name: download ${{ env.INSTANCE1 }}
+          #   uses: actions/download-artifact@master
+          #   with:
+          #     name: ${{ env.INSTANCE1 }}
+          #     path: ${{ github.workspace }}/        
+          # - name: download ${{ env.INSTANCE2 }}
+          #   uses: actions/download-artifact@master
+          #   with:
+          #     name: ${{ env.INSTANCE2 }}
+          #     path: ${{ github.workspace }}/      
+          - name: Download artifact ${{ env.INSTANCE1 }}
+            uses: dawidd6/action-download-artifact@v2
+            with:
+              workflow: examples-linux-arm.yaml
+              name: ${{ env.INSTANCE1 }}
+              path: ${{ github.workspace }}
+          - name: Download artifact ${{ env.INSTANCE2 }}
+            uses: dawidd6/action-download-artifact@v2
+            with:
+              workflow: examples-linux-arm.yaml
+              name: ${{ env.INSTANCE2 }}
+              path: ${{ github.workspace }}                                      
+          - name: Get OpenVPN and websockets
+            run: |
+                sudo apt install openvpn sshpass -y #netcat
+                #npm i websocat
+                pip install websockets asyncio
+          - name: pull avh api util
+            run: |
+              git clone https://github.com/mdupuy/avhcli.git; ls avhcli
+          - name: Create ${{ env.INSTANCE2 }} instance on AVH
+            run: |             
+              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m rpi4b create
+              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m rpi4b start
+          - name: Create ${{ env.INSTANCE1 }} instance on AVH
+            run: |
+              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m rpi4b create
+              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m rpi4b start      
+          - name: connect to AVH OpenVPN
+            run: |
+              sudo openvpn --config avhcli/avh.ovpn --daemon 
+              echo Connecting and ping-ing instances...
+              while ! ping -c 1 $(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"); do
+                echo .
+                sleep 1
+              done
+              while ! ping -c 1 $(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"); do
+                echo .
+                sleep 1
+              done
+              echo Connected
+          #see if you can scp the binaries over
+          - name: scp to ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }}
+            run: |
+              echo "copying ${{ env.INSTANCE1 }}"
+              sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
+              sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}              
+              echo "copying ${{ env.INSTANCE2 }}"
+              sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
+              sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}
+          - name: Test ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} with WebSocket to console
+            run: |
+              chmod 755 ws.py
+              chmod 755 web_socket_light_test.py
+              chmod 755 web_socket_chip_tool_test.py
+              #Async websocket script that logs in and watches for command line feedback
+              echo Starting light
+              ./web_socket_light_test.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt")
+              # echo Provisioning and power cycling
+              # ./web_socket_chip_tool_test.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
+              echo Logging into instances ${{ env.INSTANCE1 }}
+              ./ws.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt") pi n
+              ./ws.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt") raspberry n
+              sleep 5
+              echo "Provisioning (note sometime this command needs to be run twice) with ${{ env.INSTANCE1 }}"
+              # To Be Finished: ./web_socket_chip_tool_test.py to run all of this interacivly and validate responses
+              ./ws.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt") "./chip-tool pairing onnetwork-long 0x11 20202021 3840" n
+              sleep 38
+              echo Light on
+              ./ws.py $(cat "./avhcli/${{ env.INSTANCE1  }}_console.txt") "./chip-tool onoff on 0x11 1" n
+              sleep 18
+              echo Light off
+              ./ws.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt") "./chip-tool onoff off 0x11 1" n
+              sleep 20
+              #---------------------------------------------------------------------------------------------------
+              # ln -s node_modules/websocat/websocat_amd64-linux-static websocat
+              # echo Logging into consoles via web sockets
+              # echo pi | ./websocat $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt")
+              # echo pi | ./websocat $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
+              # echo raspberry | ./websocat $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt") 
+              # echo raspberry | ./websocat $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")    
+              # echo Activating ${{ env.INSTANCE2 }} light
+              # echo ./chip-lighting-app | ./websocat $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt")
+              # echo Provisioning (note sometime this command needs to be run twice) 
+              # echo "./chip-tool pairing onnetwork-long 0x11 20202021 3840" | ./websocat $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")    
+              # echo Light on
+              # echo "./chip-tool onoff on 0x11 1"| ./websocat $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
+              # echo Light off
+              # echo "./chip-tool onoff off 0x11 1"| ./websocat $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
+              # echo Provisioning (note sometime this command needs to be run twice)
+              # sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") ./chip-tool pairing onnetwork-long 0x11 20202021 3840
+              # echo Light on
+              # sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") ./chip-tool onoff on 0x11 1
+              # echo Light off
+              # sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") ./chip-tool onoff off 0x11 1
+              # echo "test ls"
+              # sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") ls
+              # ping -c 3 $(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt")
+              # ssh-keygen -f ./key -t ed25519 -q -N ""
+              # ln -s node_modules/websocat/websocat_amd64-linux-static websocat
+              # echo Logging into ${{ env.INSTANCE1 }}
+              # echo pi | ./websocat $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
+              # echo raspberry | ./websocat $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt") 
+              # echo "mkdir .ssh"| ./websocat $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt") 
+              # echo "echo $(cat key.pub) > .ssh/authorized_keys" |websocat $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
+              
+              # sshpass -p raspberry ssh pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") ls
+              # ws.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt") pi n
+              # ws.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt") raspberry n
+              # echo pi | nc -q 0 $(cat "./avhcli/${{ env.INSTANCE2 }}_ip.txt") 2000
+              # echo raspberry | nc -q 0 $(cat "./avhcli/${{ env.INSTANCE2 }}_ip.txt") 2000
+              # python3 web_socket_test.py ${{ env.ENDPOINT }} $API_TOKEN
+              # ping -c 3 $(cat "./avhcli/${{ env.INSTANCE1 }}_ip.txt")
+              #scp pi@$(cat avhcli/${{ env.INSTANCE1 }}_ip.txt) 
+            #env:
+              #INSTANCE1: ${{ secrets.INSTANCE1 }}  
+
+          - name: Stopping/Deleting ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} 
+            run: | 
+              sudo killall openvpn
+              echo Stopping...
+              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m rpi4b stop
+              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m rpi4b stop
+              #avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m rpi4b delete
+              #avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m rpi4b delete              
+   
