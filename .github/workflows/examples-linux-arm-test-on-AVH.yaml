@@ -89,10 +89,15 @@ jobs:
     virtual-device-test:
         runs-on: ubuntu-latest
         env:
-          INSTANCE1: chip-tool
-          INSTANCE2: chip-lighting-app
-          ENDPOINT: https://app.avh.arm.com/api   
-          API_TOKEN: ${{ secrets.API_TOKEN }}   
+          INSTANCE1: ${{ secrets.INSTANCE1 }} 
+          INSTANCE2: ${{ secrets.INSTANCE2 }}
+          ENDPOINT: ${{ secrets.ENDPOINT }}
+          API_TOKEN: ${{ secrets.API_TOKEN }} 
+#        env:
+#          INSTANCE1: chip-tool
+#          INSTANCE2: chip-lighting-app
+#          ENDPOINT: https://app.avh.arm.com/api   
+#          API_TOKEN: ${{ secrets.API_TOKEN }}   
         steps:
           - name: pull tests
             uses: actions/checkout@v2
