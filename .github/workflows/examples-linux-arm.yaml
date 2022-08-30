@@ -70,8 +70,8 @@ jobs:
               run: |
                   ./scripts/run_in_build_env.sh \
                      "./scripts/build/build_examples.py \
-                        --target linux-arm64-chip-tool-no-interactive \
-                        --target linux-arm64-light \
+                        --target linux-arm64-clang-chip-tool-no-interactive \
+                        --target linux-arm64-clang-light \
                         build \
                      "              
                   #      --target linux-arm64-chip-tool-no-interactive \                     
@@ -88,7 +88,7 @@ jobs:
             #  run: |
             #      .environment/pigweed-venv/bin/python3 scripts/tools/memory/gh_sizes.py \
             #        linux arm64 chip-tool \
-            #        out/linux-arm64-chip-tool-no-interactive \
+            #        out/linux-arm64-clang-chip-tool-no-interactive \
             #        /tmp/bloat_reports/
             #- name: Bloat report - light
             #  timeout-minutes: 5
@@ -108,14 +108,14 @@ jobs:
               uses: actions/upload-artifact@master
               with:
                     name: chip-lighting-app
-                    path: ${{ github.workspace }}/out/linux-arm64-light/chip-lighting-app
+                    path: ${{ github.workspace }}/out/linux-arm64-clang-light/chip-lighting-app
                     retention-days: 5
                     #path: out/linux-arm64-light/chip-lighting-app
             - name: upload-tool
               uses: actions/upload-artifact@master
               with:
                     name: chip-tool
-                    path: ${{ github.workspace }}/out/linux-arm64-chip-tool-no-interactive/chip-tool
+                    path: ${{ github.workspace }}/out/linux-arm64-clang-chip-tool-no-interactive/chip-tool
                     retention-days: 5
     # virtual-device-test:
     #     runs-on: ubuntu-latest
