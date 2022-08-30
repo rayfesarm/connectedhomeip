@@ -4,8 +4,7 @@ name: Matter_CICD_Demo
 
 # When the workflow will run
 on:
-  push:
-    branches: [ master ]
+  # push:
   workflow_dispatch:
 
 jobs:
