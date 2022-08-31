@@ -24,7 +24,7 @@ async def configureInstance():
 
     if stage == 1:
       # Log in (RPi4 or i.MX8M+ Cortex Complex
-      match = re.match(r'(?:(raspberrypi login:)|(Password:)|.*(pi\@raspberrypi:~\$)|?:(imx8mpevk login:)|.*(root@imx8mpevk:~#))', text)
+      match = re.match(r'(?:(raspberrypi login:)|(Password:)|.*(pi\@raspberrypi:~\$)|.*(imx8mpevk login:)|.*(root@imx8mpevk:~#))', text)
       if (match):
         pprint(match)
         if match[1]:
@@ -32,18 +32,19 @@ async def configureInstance():
         elif match[2]:
           await console.send('raspberry\n')
         elif match[3]:
-          print('== Logged in RPi4 ==')
+          print('== CHIP Tool Logged in RPi4 ==')
           # Hit enter to let the network code continue
           await console.send('\n')
           stage += 1
+          return True
         elif match[4]:
           await console.send('root\n')
         elif match[5]:
-          print('== Logged in i.MX8M+ ==')
+          print('== CHIP Tool Logged in i.MX8M+ ==')
           # Hit enter to let the network code continue
           await console.send('\n')
           stage += 1
-        return True
+          return True
 
     elif stage == 2:
         # First wait for chip-lighting-app to initialize
