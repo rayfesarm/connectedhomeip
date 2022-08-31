@@ -92,13 +92,15 @@ jobs:
               done
               echo Connected
 
-          - name: scp binaries to ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }}
+          - name: scp binaries to ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} on RPi4
             if: ${{ env.MODEL == 'rpi4b' }}
             run: |
               sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
               sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}
               sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
               sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}
+
+          - name: scp binaries to ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} on i.MX8M+
             if: ${{ env.MODEL == 'imx8mp-evk' }}
             run: |
               sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
@@ -106,11 +108,12 @@ jobs:
               sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
               sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}             
               
-          - name: Test ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} with WebSocket to console
+          - name: chmod755
             run: |
               chmod 755 scripts/avh/ws.py
               chmod 755 scripts/avh/web_socket_light_test.py
               chmod 755 scripts/avh/web_socket_chip_tool_test.py
+              chmod 755 avhcli/ws.py
 
           - name: Test ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} with WebSocket to console
             run: |
@@ -124,10 +127,10 @@ jobs:
           - name: Stopping/Deleting ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} 
             run: | 
               sudo killall openvpn
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m rpi4b delete
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m rpi4b delete
-              # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m rpi4b stop
-              # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m rpi4b stop
+              #avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL delete
+              #avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL delete
+              # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL stop
+              # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL stop
 
     # arm_crosscompile:
     #     name: Linux ARM Cross compile
