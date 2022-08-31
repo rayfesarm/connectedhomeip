@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Run iMX8M Cortex Complex example - Linux Arm
+name: Run iMX8M+ AVH example - Linux Arm
 
 on:
-    push:
+    # push:
     # pull_request:
     workflow_dispatch:
 
@@ -36,7 +36,8 @@ jobs:
           INSTANCE1: chip-tool
           INSTANCE2: chip-lighting-app
           ENDPOINT: https://app.avh.arm.com/api   
-          API_TOKEN: ${{ secrets.API_TOKEN }}   
+          API_TOKEN: ${{ secrets.API_TOKEN }}
+          
         steps:
           - name: pull tests
             uses: actions/checkout@v2

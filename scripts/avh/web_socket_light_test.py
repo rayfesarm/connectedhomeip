@@ -23,8 +23,8 @@ async def configureInstance():
     global done, stage
 
     if stage == 1:
-      # Log in
-      match = re.match(r'(?:(raspberrypi login:)|(Password:)|.*(pi\@raspberrypi:~\$))', text) 
+      # Log in (RPi4 or i.MX8M+ Cortex Complex
+      match = re.match(r'(?:(raspberrypi login:)|(Password:)|.*(pi\@raspberrypi:~\$)|?:(imx8mpevk login:)|.*(root@imx8mpevk:~#))', text)
       if (match):
         pprint(match)
         if match[1]:
@@ -32,22 +32,29 @@ async def configureInstance():
         elif match[2]:
           await console.send('raspberry\n')
         elif match[3]:
-          print('== Logged in ==')
+          print('== Lighting App Logged in RPi4 ==')
+          # Hit enter to let the network code continue
+          await console.send('\n')
+          stage += 1
+        elif match[4]:
+          await console.send('root\n')
+        elif match[5]:
+          print('== Lighting App Logged in i.MX8M+ ==')
           # Hit enter to let the network code continue
           await console.send('\n')
           stage += 1
         return True
+        
     elif stage == 2:
-      # Set light up to receive pairing
-      match = re.match(r'(?:.*(pi\@raspberrypi:~\$))', text)         #On/Off set value: 1 0
-      if (match):
-        if (match[1]):
-          await asyncio.sleep(1)
-          await console.send('./chip-lighting-app\n')
-          stage += 1
+        await asyncio.sleep(1)
+        await console.send('./chip-lighting-app\n')
+        await asyncio.sleep(5)
+        stage += 1
     else:
         done = True
     return False
+    
+    
   try:
     async for message in console:
 
