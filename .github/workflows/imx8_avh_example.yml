@@ -15,7 +15,7 @@
 name: Run iMX8M Cortex Complex example - Linux Arm
 
 on:
-    # push:
+    push:
     # pull_request:
     workflow_dispatch:
 
@@ -33,8 +33,8 @@ jobs:
 #          ENDPOINT: ${{ secrets.ENDPOINT }}
 #          API_TOKEN: ${{ secrets.API_TOKEN }} 
         env:
-          INSTANCE1: chip-tool-iMX8
-          INSTANCE2: chip-lighting-app-iMX8
+          INSTANCE1: chip-tool
+          INSTANCE2: chip-lighting-app
           ENDPOINT: https://app.avh.arm.com/api   
           API_TOKEN: ${{ secrets.API_TOKEN }}   
         steps:
