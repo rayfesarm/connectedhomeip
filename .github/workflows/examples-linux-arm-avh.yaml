@@ -107,6 +107,8 @@ jobs:
               fi
           - name: Test ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} with WebSocket to console
             run: |
+              pwd
+              ls
               chmod 755 scripts/avs/ws.py
               chmod 755 scripts/avs/web_socket_light_test.py
               chmod 755 scripts/avs/web_socket_chip_tool_test.py
