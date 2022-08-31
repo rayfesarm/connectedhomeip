@@ -4,7 +4,7 @@ import re
 from websockets import client as ws
 import sys
 
-import avh_api_async as AvhAPIAsync
+# import avh_api_async as AvhAPIAsync
 from pprint import pprint
 
 url = sys.argv[1]
