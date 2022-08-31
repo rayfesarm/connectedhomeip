@@ -24,7 +24,7 @@ async def configureInstance():
 
     if stage == 1:
       # Log in (RPi4 or i.MX8M+ Cortex Complex
-      match = re.match(r'(?:(raspberrypi login:)|(Password:)|.*(pi\@raspberrypi:~\$)|?:(imx8mpevk login:)|.*(root@imx8mpevk:~#))', text)
+      match = re.match(r'(?:(raspberrypi login:)|(Password:)|.*(pi\@raspberrypi:~\$)|.*(imx8mpevk login:)|.*(root@imx8mpevk:~#))', text)
       if (match):
         pprint(match)
         if match[1]:
