@@ -46,7 +46,7 @@ jobs:
 
           - name: Check definition of MODEL
 #            if: ${{ env.MODEL != 'rpi4b'}} || ${{ env.MODEL != 'imx8mp-evk'}}
-            if: ${{ env.MODEL != 'rpi4b' || 'imx8mp-evk'}}
+            if: ${{ env.MODEL != 'imx8mp-evk'}}
             run: |
               echo Env variable MODEL should be one of rpi4b or imx8mp-evk or 
               exit 1 
