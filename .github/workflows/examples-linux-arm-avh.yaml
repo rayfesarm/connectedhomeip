@@ -34,7 +34,8 @@ jobs:
 #          ENDPOINT: ${{ secrets.ENDPOINT }}
 #          API_TOKEN: ${{ secrets.API_TOKEN }} 
         env:
-          MODEL: imx8mp-evk
+          # MODEL: imx8mp-evk
+          MODEL: rpi4b
           INSTANCE1: chip-tool
           INSTANCE2: chip-lighting-app
           ENDPOINT: https://app.avh.arm.com/api   
@@ -107,11 +108,13 @@ jobs:
               
           - name: Test ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} with WebSocket to console
             run: |
-              pwd
-              ls
               chmod 755 scripts/avh/ws.py
               chmod 755 scripts/avh/web_socket_light_test.py
               chmod 755 scripts/avh/web_socket_chip_tool_test.py
+
+          - name: Test ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} with WebSocket to console
+            run: |
+              
               echo Starting lighting app
               ./scripts/avh/web_socket_light_test.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt")
               echo CHIP tool
