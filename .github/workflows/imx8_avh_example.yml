@@ -158,9 +158,9 @@ jobs:
               echo "copying ${{ env.INSTANCE1 }}"
               sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
               sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}              
-#              echo "copying ${{ env.INSTANCE2 }}"
-#              sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
-#              sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}              
+              echo "copying ${{ env.INSTANCE2 }}"
+              sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
+              sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}              
           - name: Test ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} with WebSocket to console
             run: |
               chmod 755 ws.py
@@ -173,7 +173,7 @@ jobs:
               # ./web_socket_chip_tool_test.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
               echo Logging into instances ${{ env.INSTANCE1 }}
               ./ws.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt") root n
-#              ./ws.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt") raspberry n
+              # ./ws.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt") raspberry n
               sleep 5
               echo "Provisioning (note sometime this command needs to be run twice) with ${{ env.INSTANCE1 }}"
               # To Be Finished: ./web_socket_chip_tool_test.py to run all of this interacivly and validate responses
