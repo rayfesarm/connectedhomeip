@@ -44,6 +44,12 @@ jobs:
           - name: pull tests
             uses: actions/checkout@v2
 
+          - name: Check definition of MODEL
+            if: ${{ env.MODEL != 'rpi4b'} || { env.MODEL != 'imx8mp-evk'}}
+            run: |
+              echo Env variable MODEL should be one of rpi4b or imx8mp-evk
+              exit 1 
+
           - name: Download artifact ${{ env.INSTANCE1 }}
             uses: dawidd6/action-download-artifact@v2
             with:
