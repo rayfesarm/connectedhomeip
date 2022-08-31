@@ -4,7 +4,7 @@ import re
 from websockets import client as ws
 import sys
 
-#import avh_api_async as AvhAPIAsync
+import avh_api_async as AvhAPIAsync
 from pprint import pprint
 
 url = sys.argv[1]
@@ -36,6 +36,7 @@ async def configureInstance():
           # Hit enter to let the network code continue
           await console.send('\n')
           stage += 1
+          return True
         elif match[4]:
           await console.send('root\n')
         elif match[5]:
@@ -43,7 +44,7 @@ async def configureInstance():
           # Hit enter to let the network code continue
           await console.send('\n')
           stage += 1
-        return True
+          return True
         
     elif stage == 2:
         await asyncio.sleep(1)
