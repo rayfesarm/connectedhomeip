@@ -93,15 +93,15 @@ jobs:
               echo Connected
 
           - name: scp binaries to ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }}
-            if: ${{ MODEL == 'rpi4b' }}
+            if: ${{ env.MODEL == rpi4b }}
             run: |
               sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
               sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}
               sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
               sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}
-            if: ${{ MODEL == 'imx8mp-evk' }}
+            if: ${{ $MODEL == imx8mp-evk }}
             run: |
-              shpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
+              sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
               sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}
               sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
               sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}             
