@@ -91,31 +91,31 @@ jobs:
               done
               echo Connected
 
-          - name: scp binaries to ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }}
-            run: |
-              if [[ $MODEL == 'rpi4b' ]]; then
-                sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
-                sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}
-                sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
-                sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}
-              fi
-              if [[ $MODEL == 'imx8mp-evk' ]]; then
-                sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
-                sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}
-                sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
-                sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}             
-              fi
+#          - name: scp binaries to ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }}
+#            run: |
+#              if [[ $MODEL == 'rpi4b' ]]; then
+#                sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
+#                sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}
+#                sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
+#                sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}
+#              fi
+#              if [[ $MODEL == 'imx8mp-evk' ]]; then
+#                sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
+#                sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}
+#                sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
+#                sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}             
+#              fi
           - name: Test ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} with WebSocket to console
             run: |
               pwd
               ls
-              chmod 755 scripts/avs/ws.py
-              chmod 755 scripts/avs/web_socket_light_test.py
-              chmod 755 scripts/avs/web_socket_chip_tool_test.py
+              chmod 755 scripts/avh/ws.py
+              chmod 755 scripts/avh/web_socket_light_test.py
+              chmod 755 scripts/avh/web_socket_chip_tool_test.py
               echo Starting lighting app
-              ./scripts/avs/web_socket_light_test.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt")
+              ./scripts/avh/web_socket_light_test.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt")
               echo CHIP tool
-              ./scripts/avs/web_socket_chip_tool_test.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
+              ./scripts/avh/web_socket_chip_tool_test.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
               sleep 20
 
           - name: Stopping/Deleting ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} 
