@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Run RPi4 AVH example - Linux Arm
+name: Run Arm Virtual Hardware example - Linux Arm
 
 on:
     # push:
