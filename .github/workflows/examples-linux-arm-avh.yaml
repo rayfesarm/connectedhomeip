@@ -24,6 +24,106 @@ concurrency:
     cancel-in-progress: true
 
 jobs:
+    virtual-device-test:
+        runs-on: ubuntu-latest
+# MODEL should be one of imx8mp-evk, rpi4b (or stm32u5-b-u585i-iot02a)
+#        env:
+#          MODEL: ${{ secrets.MODEL }} 
+#          INSTANCE1: ${{ secrets.INSTANCE1 }} 
+#          INSTANCE2: ${{ secrets.INSTANCE2 }}
+#          ENDPOINT: ${{ secrets.ENDPOINT }}
+#          API_TOKEN: ${{ secrets.API_TOKEN }} 
+        env:
+          MODEL: imx8mp-evk
+          INSTANCE1: chip-tool
+          INSTANCE2: chip-lighting-app
+          ENDPOINT: https://app.avh.arm.com/api   
+          API_TOKEN: ${{ secrets.API_TOKEN }}   
+        steps:
+          - name: pull tests
+            uses: actions/checkout@v2
+
+          - name: Download artifact ${{ env.INSTANCE1 }}
+            uses: dawidd6/action-download-artifact@v2
+            with:
+              workflow: examples-linux-arm.yaml
+              name: ${{ env.INSTANCE1 }}
+              path: ${{ github.workspace }}
+
+          - name: Download artifact ${{ env.INSTANCE2 }}
+            uses: dawidd6/action-download-artifact@v2
+            with:
+              workflow: examples-linux-arm.yaml
+              name: ${{ env.INSTANCE2 }}
+              path: ${{ github.workspace }}                                      
+
+          - name: Get OpenVPN and websockets
+            run: |
+                sudo apt install openvpn sshpass -y #netcat
+                #npm i websocat
+                pip install websockets asyncio
+
+          - name: pull avh api util
+            run: |
+              git clone https://github.com/mdupuy/avhcli.git; ls avhcli
+
+          - name: Create ${{ env.INSTANCE2 }} instance on AVH
+            run: |             
+              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL create
+              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL start
+
+          - name: Create ${{ env.INSTANCE1 }} instance on AVH
+            run: |
+              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL create
+              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL start
+
+          - name: connect to AVH OpenVPN
+            run: |
+              sudo openvpn --config avhcli/avh.ovpn --daemon 
+              echo Connecting and ping-ing instances...
+              while ! ping -c 1 $(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"); do
+                echo .
+                sleep 1
+              done
+              while ! ping -c 1 $(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"); do
+                echo .
+                sleep 1
+              done
+              echo Connected
+
+          - name: scp binaries to ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }}
+            run: |
+              if [[ $MODEL == 'rpi4b' ]]; then
+                sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
+                sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}
+                sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
+                sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}
+              fi
+              if [[ $MODEL == 'imx8mp-evk' ]]; then
+                sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
+                sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}
+                sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
+                sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}             
+              fi
+          - name: Test ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} with WebSocket to console
+            run: |
+              chmod 755 scripts/avs/ws.py
+              chmod 755 scripts/avs/web_socket_light_test.py
+              chmod 755 scripts/avs/web_socket_chip_tool_test.py
+              echo Starting lighting app
+              ./scripts/avs/web_socket_light_test.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt")
+              echo CHIP tool
+              ./scripts/avs/web_socket_chip_tool_test.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
+              sleep 20
+
+          - name: Stopping/Deleting ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} 
+            run: | 
+              sudo killall openvpn
+              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m rpi4b delete
+              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m rpi4b delete
+              # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m rpi4b stop
+              # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m rpi4b stop
+
     # arm_crosscompile:
     #     name: Linux ARM Cross compile
     #     timeout-minutes: 70
@@ -86,106 +186,8 @@ jobs:
     #     #       with:
     #     #             name: chip-tool
     #     #             path: ${{ github.workspace }}/out/linux-arm64-chip-tool-no-interactive/chip-tool
-    virtual-device-test:
-        runs-on: ubuntu-latest
-        env:
-          INSTANCE1: ${{ secrets.INSTANCE1 }} 
-          INSTANCE2: ${{ secrets.INSTANCE2 }}
-          ENDPOINT: ${{ secrets.ENDPOINT }}
-          API_TOKEN: ${{ secrets.API_TOKEN }} 
-#        env:
-#          INSTANCE1: chip-tool
-#          INSTANCE2: chip-lighting-app
-#          ENDPOINT: https://app.avh.arm.com/api   
-#          API_TOKEN: ${{ secrets.API_TOKEN }}   
-        steps:
-          - name: pull tests
-            uses: actions/checkout@v2
-          # - name: download ${{ env.INSTANCE1 }}
-          #   uses: actions/download-artifact@master
-          #   with:
-          #     name: ${{ env.INSTANCE1 }}
-          #     path: ${{ github.workspace }}/        
-          # - name: download ${{ env.INSTANCE2 }}
-          #   uses: actions/download-artifact@master
-          #   with:
-          #     name: ${{ env.INSTANCE2 }}
-          #     path: ${{ github.workspace }}/      
-          - name: Download artifact ${{ env.INSTANCE1 }}
-            uses: dawidd6/action-download-artifact@v2
-            with:
-              workflow: examples-linux-arm.yaml
-              name: ${{ env.INSTANCE1 }}
-              path: ${{ github.workspace }}
-          - name: Download artifact ${{ env.INSTANCE2 }}
-            uses: dawidd6/action-download-artifact@v2
-            with:
-              workflow: examples-linux-arm.yaml
-              name: ${{ env.INSTANCE2 }}
-              path: ${{ github.workspace }}                                      
-          - name: Get OpenVPN and websockets
-            run: |
-                sudo apt install openvpn sshpass -y #netcat
-                #npm i websocat
-                pip install websockets asyncio
-          - name: pull avh api util
-            run: |
-              git clone https://github.com/mdupuy/avhcli.git; ls avhcli
-          - name: Create ${{ env.INSTANCE2 }} instance on AVH
-            run: |             
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m rpi4b create
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m rpi4b start
-          - name: Create ${{ env.INSTANCE1 }} instance on AVH
-            run: |
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m rpi4b create
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m rpi4b start      
-          - name: connect to AVH OpenVPN
-            run: |
-              sudo openvpn --config avhcli/avh.ovpn --daemon 
-              echo Connecting and ping-ing instances...
-              while ! ping -c 1 $(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"); do
-                echo .
-                sleep 1
-              done
-              while ! ping -c 1 $(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"); do
-                echo .
-                sleep 1
-              done
-              echo Connected
-          #see if you can scp the binaries over
-          - name: scp to ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }}
-            run: |
-              echo "copying ${{ env.INSTANCE1 }}"
-              sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
-              sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}              
-              echo "copying ${{ env.INSTANCE2 }}"
-              sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
-              sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}
-          - name: Test ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} with WebSocket to console
-            run: |
-              chmod 755 ws.py
-              chmod 755 web_socket_light_test.py
-              chmod 755 web_socket_chip_tool_test.py
-              #Async websocket script that logs in and watches for command line feedback
-              echo Starting light
-              ./web_socket_light_test.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt")
-              # echo Provisioning and power cycling
-              # ./web_socket_chip_tool_test.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
-              echo Logging into instances ${{ env.INSTANCE1 }}
-              ./ws.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt") pi n
-              ./ws.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt") raspberry n
-              sleep 5
-              echo "Provisioning (note sometime this command needs to be run twice) with ${{ env.INSTANCE1 }}"
-              # To Be Finished: ./web_socket_chip_tool_test.py to run all of this interacivly and validate responses
-              ./ws.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt") "./chip-tool pairing onnetwork-long 0x11 20202021 3840" n
-              sleep 38
-              echo Light on
-              ./ws.py $(cat "./avhcli/${{ env.INSTANCE1  }}_console.txt") "./chip-tool onoff on 0x11 1" n
-              sleep 18
-              echo Light off
-              ./ws.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt") "./chip-tool onoff off 0x11 1" n
-              sleep 20
-              #---------------------------------------------------------------------------------------------------
+    
+                  #---------------------------------------------------------------------------------------------------
               # ln -s node_modules/websocat/websocat_amd64-linux-static websocat
               # echo Logging into consoles via web sockets
               # echo pi | ./websocat $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt")
@@ -227,13 +229,4 @@ jobs:
               #scp pi@$(cat avhcli/${{ env.INSTANCE1 }}_ip.txt) 
             #env:
               #INSTANCE1: ${{ secrets.INSTANCE1 }}  
-
-          - name: Stopping/Deleting ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} 
-            run: | 
-              sudo killall openvpn
-              echo Stopping...
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m rpi4b stop
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m rpi4b stop
-              #avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m rpi4b delete
-              #avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m rpi4b delete              
-   
+              
