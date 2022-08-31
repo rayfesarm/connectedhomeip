@@ -160,8 +160,7 @@ jobs:
               sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}              
               echo "copying ${{ env.INSTANCE2 }}"
               sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
-              sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}
-              
+              sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}              
           - name: Test ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} with WebSocket to console
             run: |
               chmod 755 ws.py
