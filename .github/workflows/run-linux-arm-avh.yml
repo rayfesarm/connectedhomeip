@@ -63,12 +63,14 @@ jobs:
           - name: Download artifact ${{ env.INSTANCE1 }}
             uses: actions/download-artifact@v3
             with:
+              workflow: build-linux-arm-avh.yml
               name: ${{ env.INSTANCE1 }}
               path: ${{ github.workspace }}
 
           - name: Download artifact ${{ env.INSTANCE2 }}
             uses: actions/download-artifact@v3
             with:
+              workflow: build-linux-arm-avh.yml
               name: ${{ env.INSTANCE2 }}
               path: ${{ github.workspace }}                                      
 
