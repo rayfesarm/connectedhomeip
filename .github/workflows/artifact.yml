@@ -34,12 +34,18 @@ jobs:
             name: ${{ env.INSTANCE1 }}
             path: ${{ github.workspace }}
 
-        - name: cache those files
+        - name: cache ${{ env.INSTANCE1 }}
           uses: actions/cache@v3
           with:
             path: ${{ github.workspace }}
-            key: synnott
-            
+            key: ${{ env.INSTANCE1}}
+
+        - name: cache ${{ env.INSTANCE2 }}
+          uses: actions/cache@v3
+          with:
+            path: ${{ github.workspace }}
+            key: ${{ env.INSTANCE2}}
+
     downloadjob:
         needs: uploadjob
         runs-on: ubuntu-latest
