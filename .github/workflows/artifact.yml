@@ -33,3 +33,16 @@ jobs:
           with:
             name: ${{ env.INSTANCE1 }}
             path: ${{ github.workspace }}
+
+    downloadjob:
+        needs: upload
+        runs-on: ubuntu-latest
+        env:
+            INSTANCE1: art1
+            INSTANCE2: art2
+        steps:
+        - name: testing123
+          run: |
+            pwd
+            ls
+            
