@@ -12,12 +12,8 @@ jobs:
             INSTANCE1: lighting-app
             INSTANCE2: chip-tool
         steps:
-            - name: pull tests
-              uses: actions/checkout@v2
-
             - name: create some files
-              with:
-                    path: ${{ github.workspace }}/ronan
+              path: //home
               run: |
                 pwd
                 mkdir ronan
@@ -28,7 +24,7 @@ jobs:
             - name: cache lighting-app
               uses: actions/cache@v3
               with:
-                    path: ${{ github.workspace }}/ronan/test1.txt
+                    path: home/temp/ronan/test1.txt
                     key: ${{ env.INSTANCE2 }}
 
 
