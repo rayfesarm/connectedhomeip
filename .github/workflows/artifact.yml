@@ -7,7 +7,7 @@ on:
     workflow_dispatch:
 
 jobs:
-    upload:
+    uploadjob:
         runs-on: ubuntu-latest
         env:
             INSTANCE1: art1
@@ -35,9 +35,7 @@ jobs:
             name: ${{ env.INSTANCE1 }}
             path: ${{ github.workspace }}
 
-
-
-    download:
+    downloadjob:
         needs: upload
         runs-on: ubuntu-latest
         env:
