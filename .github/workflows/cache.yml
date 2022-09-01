@@ -17,8 +17,8 @@ jobs:
                 pwd
                 mkdir ronan
                 cd ronan
-                date >> lighting-app
-                who >> chip-tool
+                date >> ${{ env.INSTANCE1}}
+                who >> ${{ env.INSTANCE2}}
                 pwd
                 ls
 
@@ -46,6 +46,7 @@ jobs:
 
           - name: use cache
             run: |
+                pwd
                 cat ${{ env.INSTANCE1}}
                 cat ${{ env.INSTANCE2}}
 
