@@ -34,7 +34,7 @@ jobs:
             path: ronan
             key: ${{ env.INSTANCE1}}
 
-    use_cache
+    use_cache:
         runs-on: ubuntu-latest
         env:
             INSTANCE1: lighting-app
