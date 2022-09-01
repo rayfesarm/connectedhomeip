@@ -35,6 +35,7 @@ jobs:
             key: ${{ env.INSTANCE1}}
 
     use_cache:
+        needs: create_and_cache
         runs-on: ubuntu-latest
         env:
             INSTANCE1: lighting-app
