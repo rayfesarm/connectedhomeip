@@ -13,10 +13,6 @@ jobs:
             INSTANCE2: art2
         steps:
         - name: create some files
-          uses: actions/cache@v3
-          with:
-            path: ${{ github.workspace }}
-            key: synnott
           run: |
             pwd
             mkdir ronan
@@ -37,6 +33,12 @@ jobs:
           with:
             name: ${{ env.INSTANCE1 }}
             path: ${{ github.workspace }}
+
+        - name: cache those files
+          uses: actions/cache@v3
+          with:
+            path: ${{ github.workspace }}
+            key: synnott
             
     downloadjob:
         needs: uploadjob
