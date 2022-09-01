@@ -15,6 +15,7 @@ jobs:
         - name: create some files
           run: |
                 pwd
+                cd ..
                 mkdir ronan
                 cd ronan
                 date >> ${{ env.INSTANCE1}}
@@ -48,7 +49,7 @@ jobs:
             run: |
                 pwd
                 ls
-                cd ronan
+                cd ../ronan
                 cat ${{ env.INSTANCE1}}
                 cat ${{ env.INSTANCE2}}
 
