@@ -88,14 +88,14 @@ jobs:
               with:
                     name: ${{ env.INSTANCE2 }}
                     path: ${{ github.workspace }}/out/linux-arm64-clang-light/chip-lighting-app
-                    retention-days: 5
+                    retention-days: 1
 
             - name: upload ${{ env.INSTANCE1 }}
               uses: actions/upload-artifact@v3
               with:
                     name: ${{ env.INSTANCE1 }}
                     path: ${{ github.workspace }}/out/linux-arm64-clang-chip-tool-no-interactive/chip-tool
-                    retention-days: 5
+                    retention-days: 1
 
 
     virtual-device-test:
@@ -109,8 +109,8 @@ jobs:
 #          ENDPOINT: ${{ secrets.ENDPOINT }}
 #          API_TOKEN: ${{ secrets.API_TOKEN }} 
         env:
-          MODEL: imx8mp-evk
-          # MODEL: rpi4b
+          # MODEL: imx8mp-evk
+          MODEL: rpi4b
           INSTANCE1: chip-tool
           INSTANCE2: chip-lighting-app
           ENDPOINT: https://app.avh.arm.com/api   
@@ -119,19 +119,17 @@ jobs:
           - name: pull tests
             uses: actions/checkout@v2
 
-#          - name: Download artifact ${{ env.INSTANCE1 }}
-#            uses: dawidd6/action-download-artifact@v2
-#            with:
-#              # workflow: examples-linux-arm.yaml
-#              name: ${{ env.INSTANCE1 }}
-#              path: ${{ github.workspace }}
-#
-#          - name: Download artifact ${{ env.INSTANCE2 }}
-#            uses: dawidd6/action-download-artifact@v2
-#            with:
-#              # workflow: examples-linux-arm.yaml
-#              name: ${{ env.INSTANCE2 }}
-#              path: ${{ github.workspace }}                                      
+        - name: Download artifact ${{ env.INSTANCE1 }}
+          uses: actions/download-artifact@v2
+          with:
+            name: ${{ env.INSTANCE1 }}
+            path: ${{ github.workspace }}
+
+        - name: Download artifact ${{ env.INSTANCE2 }}
+          uses: actions/download-artifact@v2
+          with:
+            name: ${{ env.INSTANCE2 }}
+            path: ${{ github.workspace }}
 
           - name: Get OpenVPN websockets and other dependencies
             run: |
