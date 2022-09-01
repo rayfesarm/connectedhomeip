@@ -92,14 +92,14 @@ jobs:
                      "
 
             - name: upload lighting-app
-              uses: actions/upload-artifact@master
+              uses: actions/upload-artifact@v3
               with:
                     name: ${{ env.INSTANCE2 }}
                     path: ${{ github.workspace }}/out/linux-arm64-clang-light/chip-lighting-app
                     retention-days: 5
 
             - name: upload chip-tool
-              uses: actions/upload-artifact@master
+              uses: actions/upload-artifact@v3
               with:
                     name: ${{ env.INSTANCE1 }}
                     path: ${{ github.workspace }}/out/linux-arm64-clang-chip-tool-no-interactive/chip-tool
