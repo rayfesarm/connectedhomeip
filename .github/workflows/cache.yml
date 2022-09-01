@@ -12,8 +12,8 @@ jobs:
             INSTANCE1: lighting-app
             INSTANCE2: chip-tool
         steps:
-            - name: create some files
-              run: |
+        - name: create some files
+          run: |
                 pwd
                 mkdir ronan
                 cd ronan
@@ -22,14 +22,15 @@ jobs:
                 pwd
                 ls
 
-            - name: cache ${{ env.INSTANCE2 }}
-              uses: actions/cache@v3
-              with:
-                    path: path: ${{ github.workspace }}/ronan/test2.txt
-                    key: ${{ env.INSTANCE2 }}
+        - name: cache ${{ env.INSTANCE2 }}
+          uses: actions/cache@v3
+          with:
+                path: path: ${{ github.workspace }}/ronan/test2.txt
+                key: ${{ env.INSTANCE2 }}
 
-            - name: cache ${{ env.INSTANCE1 }}
-              uses: actions/cache@v3
-              with:
-                    path: path: ${{ github.workspace }}/ronan/test1.txt
-                    key: ${{ env.INSTANCE1}}
+        - name: cache ${{ env.INSTANCE1 }}
+          uses: actions/cache@v3
+          with:
+                path: path: ${{ github.workspace }}/ronan/test1.txt
+                key: ${{ env.INSTANCE1}}
+                
