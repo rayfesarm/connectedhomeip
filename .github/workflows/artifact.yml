@@ -19,7 +19,7 @@ jobs:
             mkdir ronan
             cd ronan
             date >> ${{ env.INSTANCE1}}
-            wait 5s
+            sleep 5
             date >> ${{ env.INSTANCE2}}
             pwd
             ls
