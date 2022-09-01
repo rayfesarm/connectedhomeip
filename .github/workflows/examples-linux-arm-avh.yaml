@@ -108,7 +108,6 @@ jobs:
                     path: ${{ github.workspace }}/out/linux-arm64-clang-chip-tool-no-interactive/chip-tool
                     retention-days: 5
 
-jobs:
     virtual-device-test:
         needs: arm_crosscompile
         runs-on: ubuntu-latest
