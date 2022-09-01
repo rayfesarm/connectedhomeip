@@ -25,7 +25,7 @@ name: Run Matter Linux examples on Arm Virtual Hardware
 # Recommended to specify as API_TOKEN secret
 
 on:
-    push:
+    # push:
     # pull_request:
     workflow_dispatch:
 

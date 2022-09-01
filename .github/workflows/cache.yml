@@ -1,0 +1,39 @@
+name: How to use cache?
+
+on:
+    push:
+    # pull_request:
+    workflow_dispatch:
+   
+jobs:
+    create and cache:
+        runs-on: ubuntu-latest
+        env:
+            INSTANCE1: lighting-app
+            INSTANCE2: chip-tool
+        steps:
+            - name: pull tests
+              uses: actions/checkout@v2
+
+            - name: create some files
+              with:
+                    path: ${{ github.workspace }}/ronan
+              run: |
+			    pwd
+                mkdir ronan
+                cd ronan
+                date >> test1.txt
+                who >> test2.txt
+
+            - name: cache lighting-app
+              uses: actions/cache@v3
+              with:
+                    path: ${{ github.workspace }}/ronan/test1.txt
+                    key: ${{ env.INSTANCE2 }}
+
+
+            - name: cache chip-tool
+              uses: actions/cache@v3
+              with:
+                    path: ${{ github.workspace }}/ronan/test1.txt
+                    key: ${{ env.INSTANCE1 }}
