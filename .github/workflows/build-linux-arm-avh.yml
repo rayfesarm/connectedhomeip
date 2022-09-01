@@ -1,0 +1,107 @@
+# Copyright (c) 2020 Project CHIP Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Build Matter Linux examples for Arm Virtual Hardware
+
+# Example workflow using Arm Virtual Hardware (AVH) targets for testing
+# See https://avh.arm.com for more info
+# 
+# Raspberry Pi 4, or i.MX8M+ selected by MODEL environment variable
+# 
+# You will need an Arm Virtual Hardware login to run successfully
+# To generate API_TOKEN, go to Profile > API > Generate in AVH browser window.
+# Recommended to specify as API_TOKEN secret
+
+on:
+    # push:
+    # pull_request:
+    workflow_dispatch:
+
+concurrency:
+    group: ${{ github.ref }}-${{ github.workflow }}-${{ (github.event_name == 'pull_request' && github.event.number) || (github.event_name == 'workflow_dispatch' && github.run_number) || github.sha }}
+    cancel-in-progress: true
+    
+
+jobs:
+# Job modified from examples-linux-arm.yaml
+    arm_crosscompile:
+        name: Linux Arm Cross compile
+        timeout-minutes: 70
+        runs-on: ubuntu-latest
+#        env:
+#          INSTANCE1: ${{ secrets.INSTANCE1 }} 
+#          INSTANCE2: ${{ secrets.INSTANCE2 }}
+        env:
+          INSTANCE1: chip-tool
+          INSTANCE2: chip-lighting-app
+        if: github.actor != 'restyled-io[bot]'
+
+        container:
+            image: connectedhomeip/chip-build-crosscompile:0.5.79
+            volumes:
+                - "/tmp/bloat_reports:/tmp/bloat_reports"
+
+        steps:
+            - uses: Wandalen/wretry.action@v1.0.15
+              name: Checkout
+              with:
+                  action: actions/checkout@v3
+                  with: |
+                      token: ${{ github.token }}
+                  attempt_limit: 3
+                  attempt_delay: 2000
+            - name: Checkout submodules
+              run: scripts/checkout_submodules.py --shallow --platform linux
+
+            - name: Set up environment for size reports
+              if: ${{ !env.ACT }}
+              env:
+                  GH_CONTEXT: ${{ toJson(github) }}
+              run: scripts/tools/memory/gh_sizes_environment.py "${GH_CONTEXT}"
+
+            - name: Bootstrap
+              timeout-minutes: 10
+              run: scripts/build/gn_bootstrap.sh
+            - name: Uploading bootstrap logs
+              uses: actions/upload-artifact@v2
+              if: ${{ always() }} && ${{ !env.ACT }}
+              with:
+                  name: bootstrap-logs
+                  path: |
+                      .environment/gn_out/.ninja_log
+                      .environment/pigweed-venv/*.log
+            - name: Build Some samples
+              timeout-minutes: 45
+              run: |
+                  ./scripts/run_in_build_env.sh \
+                     "./scripts/build/build_examples.py \
+                        --target linux-arm64-clang-chip-tool-no-interactive \
+                        --target linux-arm64-clang-light \
+                        build \
+                     "
+
+            - name: upload lighting-app
+              uses: actions/upload-artifact@master
+              with:
+                    name: ${{ env.INSTANCE2 }}
+                    path: ${{ github.workspace }}/out/linux-arm64-clang-light/chip-lighting-app
+                    retention-days: 5
+
+            - name: upload chip-tool
+              uses: actions/upload-artifact@master
+              with:
+                    name: ${{ env.INSTANCE1 }}
+                    path: ${{ github.workspace }}/out/linux-arm64-clang-chip-tool-no-interactive/chip-tool
+                    retention-days: 5
+
