@@ -6,7 +6,7 @@ on:
     workflow_dispatch:
    
 jobs:
-    create and cache:
+    create_and_cache:
         runs-on: ubuntu-latest
         env:
             INSTANCE1: lighting-app
