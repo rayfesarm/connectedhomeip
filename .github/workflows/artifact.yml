@@ -38,6 +38,7 @@ jobs:
 
 
     download:
+        needs: upload
         runs-on: ubuntu-latest
         env:
             INSTANCE1: art1
