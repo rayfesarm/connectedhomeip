@@ -51,8 +51,8 @@ jobs:
         needs: uploadjob
         runs-on: ubuntu-latest
         env:
-            INSTANCE1: art1
-            INSTANCE2: art2
+            INSTANCE1: artifact1
+            INSTANCE2: artifact2
         steps:
         - name: cache ${{ env.INSTANCE1 }}
           uses: actions/cache@v3
