@@ -9,14 +9,14 @@ jobs:
     uploadjob:
         runs-on: ubuntu-latest
         env:
-            INSTANCE1: art1
-            INSTANCE2: art2
+            INSTANCE1: artifact1
+            INSTANCE2: artifact2
         steps:
         - name: create some files
           run: |
             pwd
-            # mkdir ronan
-            # cd ronan
+            # mkdir dave
+            # cd dave
             date >> ${{ env.INSTANCE1}}
             sleep 1
             date >> ${{ env.INSTANCE2}}
@@ -34,6 +34,17 @@ jobs:
             # name: ${{ env.INSTANCE1 }}
             # path: ${{ github.workspace }}
 
+        - name: cache ${{ env.INSTANCE1 }}
+          uses: actions/cache@v3
+          with:
+            path: ${{ github.workspace }}
+            key: ${{ env.INSTANCE1}}
+
+        - name: cache ${{ env.INSTANCE2 }}
+          uses: actions/cache@v3
+          with:
+            path: ${{ github.workspace }}
+            key: ${{ env.INSTANCE2}}
 
     downloadjob:
         needs: uploadjob
