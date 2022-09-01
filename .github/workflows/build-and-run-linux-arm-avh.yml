@@ -83,18 +83,19 @@ jobs:
                         build \
                      "
 
-            - name: cache lighting-app
-              uses: actions/cache@v3
+            - name: upload ${{ env.INSTANCE2 }}
+              uses: actions/upload-artifact@v3
               with:
+                    name: ${{ env.INSTANCE2 }}
                     path: ${{ github.workspace }}/out/linux-arm64-clang-light/chip-lighting-app
-                    key: ${{ env.INSTANCE2 }}
+                    retention-days: 5
 
-
-            - name: cache chip-tool
-              uses: actions/cache@v3
+            - name: upload ${{ env.INSTANCE1 }}
+              uses: actions/upload-artifact@v3
               with:
+                    name: ${{ env.INSTANCE1 }}
                     path: ${{ github.workspace }}/out/linux-arm64-clang-chip-tool-no-interactive/chip-tool
-                    key: ${{ env.INSTANCE1 }}
+                    retention-days: 5
 
 
     virtual-device-test:
