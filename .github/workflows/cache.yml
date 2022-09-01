@@ -47,6 +47,8 @@ jobs:
           - name: use cache
             run: |
                 pwd
+                ls
+                cd ronan
                 cat ${{ env.INSTANCE1}}
                 cat ${{ env.INSTANCE2}}
 
