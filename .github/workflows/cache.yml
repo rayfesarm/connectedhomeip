@@ -17,20 +17,20 @@ jobs:
                 pwd
                 mkdir ronan
                 cd ronan
-                date >> test1.txt
-                who >> test2.txt
+                date >> lighting-app.txt
+                who >> chip-tool.txt
                 pwd
                 ls
 
         - name: cache ${{ env.INSTANCE2 }}
           uses: actions/cache@v3
           with:
-                path: path: ${{ github.workspace }}/ronan/test2.txt
-                key: ${{ env.INSTANCE2 }}
+            path: ronan
+            key: ${{ env.INSTANCE2 }}
 
         - name: cache ${{ env.INSTANCE1 }}
           uses: actions/cache@v3
           with:
-                path: path: ${{ github.workspace }}/ronan/test1.txt
-                key: ${{ env.INSTANCE1}}
+            path: ronan
+            key: ${{ env.INSTANCE1}}
                 
