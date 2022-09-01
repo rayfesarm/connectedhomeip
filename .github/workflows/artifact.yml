@@ -9,8 +9,8 @@ jobs:
     uploadjob:
         runs-on: ubuntu-latest
         env:
-            INSTANCE1: artifact1
-            INSTANCE2: artifact2
+            INSTANCE1: artifact1.txt
+            INSTANCE2: artifact2.txt
         steps:
         - name: create some files
           run: |
@@ -25,13 +25,13 @@ jobs:
           uses: actions/upload-artifact@v3
           with:
             name: ${{ env.INSTANCE2 }}
-            path: ${{ github.workspace }}
+            path: ${{ github.workspace }}/${{ env.INSTANCE2 }}
         
         - name: upload ${{ env.INSTANCE1 }}
           uses: actions/upload-artifact@v3
           with:
             name: ${{ env.INSTANCE1 }}
-            path: ${{ github.workspace }}
+            path: ${{ github.workspace }}/${{ env.INSTANCE2 }}
 
 
 
@@ -39,8 +39,8 @@ jobs:
         needs: uploadjob
         runs-on: ubuntu-latest
         env:
-            INSTANCE1: artifact1
-            INSTANCE2: artifact2
+            INSTANCE1: artifact1.txt
+            INSTANCE2: artifact2.txt
         steps:
         - name: Download artifact ${{ env.INSTANCE1 }}
           uses: dawidd6/action-download-artifact@v2
