@@ -22,17 +22,17 @@ jobs:
             date >> ${{ env.INSTANCE2}}
             pwd
             ls
-        - name: upload ${{ env.INSTANCE2 }}
-          uses: actions/upload-artifact@v3
-          with:
-            name: ${{ env.INSTANCE2 }}
-            path: ${{ github.workspace }}
+        # - name: upload ${{ env.INSTANCE2 }}
+          # uses: actions/upload-artifact@v3
+          # with:
+            # name: ${{ env.INSTANCE2 }}
+            # path: ${{ github.workspace }}
         
-        - name: upload ${{ env.INSTANCE1 }}
-          uses: actions/upload-artifact@v3
-          with:
-            name: ${{ env.INSTANCE1 }}
-            path: ${{ github.workspace }}
+        # - name: upload ${{ env.INSTANCE1 }}
+          # uses: actions/upload-artifact@v3
+          # with:
+            # name: ${{ env.INSTANCE1 }}
+            # path: ${{ github.workspace }}
 
         - name: cache ${{ env.INSTANCE1 }}
           uses: actions/cache@v3
