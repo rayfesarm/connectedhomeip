@@ -2,7 +2,7 @@ name: artifact testing
 
 
 on:
-    # push:
+    push:
     # pull_request:
     workflow_dispatch:
 
@@ -19,7 +19,8 @@ jobs:
             mkdir ronan
             cd ronan
             date >> ${{ env.INSTANCE1}}
-            who >> ${{ env.INSTANCE2}}
+            wait 5s
+            date >> ${{ env.INSTANCE2}}
             pwd
             ls
         - name: upload ${{ env.INSTANCE2 }}
