@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Run Arm Virtual Hardware example - Linux Arm
+name: Build and run Matter Linux examples for Arm Virtual Hardware
 
 # Example workflow using Arm Virtual Hardware (AVH) targets for testing
 # See https://avh.arm.com for more info
@@ -22,9 +22,6 @@ name: Run Arm Virtual Hardware example - Linux Arm
 # You will need an Arm Virtual Hardware login to run successfully
 # To generate API_TOKEN, go to Profile > API > Generate in AVH browser window.
 # Recommended to specify as API_TOKEN secret
-
-# This workflow builds and runs the examples
-
 
 on:
     # push:
@@ -37,7 +34,6 @@ concurrency:
     
 
 jobs:
-# Job modified from examples-linux-arm.yaml
     arm_crosscompile:
         name: Linux Arm Cross compile
         timeout-minutes: 70
@@ -94,19 +90,18 @@ jobs:
                         build \
                      "
 
-            - name: upload lighting-app
-              uses: actions/upload-artifact@master
+            - name: cache lighting-app
+              uses: actions/cache@v3
               with:
-                    name: ${{ env.INSTANCE2 }}
                     path: ${{ github.workspace }}/out/linux-arm64-clang-light/chip-lighting-app
-                    retention-days: 5
+                    key: ${{ env.INSTANCE2 }}
 
-            - name: upload chip-tool
-              uses: actions/upload-artifact@master
+
+            - name: cache chip-tool
+              uses: actions/cache@v3
               with:
-                    name: ${{ env.INSTANCE1 }}
                     path: ${{ github.workspace }}/out/linux-arm64-clang-chip-tool-no-interactive/chip-tool
-                    retention-days: 5
+                    key: ${{ env.INSTANCE1 }}
 
     virtual-device-test:
         needs: arm_crosscompile
@@ -129,19 +124,19 @@ jobs:
           - name: pull tests
             uses: actions/checkout@v2
 
-          - name: Download artifact ${{ env.INSTANCE1 }}
-            uses: dawidd6/action-download-artifact@v2
-            with:
-              # workflow: examples-linux-arm.yaml
-              name: ${{ env.INSTANCE1 }}
-              path: ${{ github.workspace }}
-
-          - name: Download artifact ${{ env.INSTANCE2 }}
-            uses: dawidd6/action-download-artifact@v2
-            with:
-              # workflow: examples-linux-arm.yaml
-              name: ${{ env.INSTANCE2 }}
-              path: ${{ github.workspace }}                                      
+#          - name: Download artifact ${{ env.INSTANCE1 }}
+#            uses: dawidd6/action-download-artifact@v2
+#            with:
+#              # workflow: examples-linux-arm.yaml
+#              name: ${{ env.INSTANCE1 }}
+#              path: ${{ github.workspace }}
+#
+#          - name: Download artifact ${{ env.INSTANCE2 }}
+#            uses: dawidd6/action-download-artifact@v2
+#            with:
+#              # workflow: examples-linux-arm.yaml
+#              name: ${{ env.INSTANCE2 }}
+#              path: ${{ github.workspace }}                                      
 
           - name: Get OpenVPN websockets and other dependencies
             run: |
@@ -214,7 +209,7 @@ jobs:
           - name: Stopping/Deleting ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} 
             run: | 
               sudo killall openvpn
-              # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL delete
-              # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL delete
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL stop
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL stop
+              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL delete
+              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL delete
+              # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL stop
+              # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL stop

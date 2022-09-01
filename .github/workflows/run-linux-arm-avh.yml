@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Run Arm Virtual Hardware example - Requires build-linux-arm-avh.yml workflow to have been run
+name: Run Matter Linux examples on Arm Virtual Hardware
+# Requires build-linux-arm-avh.yml workflow to have been run
 
 # Example workflow using Arm Virtual Hardware (AVH) targets for testing
 # See https://avh.arm.com for more info
@@ -139,7 +140,7 @@ jobs:
           - name: Stopping/Deleting ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} 
             run: | 
               sudo killall openvpn
-              # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL delete
-              # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL delete
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL stop
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL stop
+              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL delete
+              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL delete
+              #avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL stop
+              #avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL stop
