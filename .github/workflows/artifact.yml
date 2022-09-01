@@ -1,5 +1,11 @@
 name: artifact testing
 
+
+on:
+    # push:
+    # pull_request:
+    workflow_dispatch:
+
 jobs:
     upload:
         runs-on: ubuntu-latest

@@ -1,7 +1,7 @@
 name: How to use cache?
 
 on:
-    push:
+    # push:
     # pull_request:
     workflow_dispatch:
    
