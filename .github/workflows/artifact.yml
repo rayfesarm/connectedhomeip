@@ -1,6 +1,5 @@
 name: artifact testing
 
-
 on:
     push:
     # pull_request:
@@ -34,36 +33,3 @@ jobs:
           with:
             name: ${{ env.INSTANCE1 }}
             path: ${{ github.workspace }}
-            
-
-    downloadjob:
-        needs: upload
-        runs-on: ubuntu-latest
-        env:
-            INSTANCE1: art1
-            INSTANCE2: art2
-        steps:
-        - name: Download artifact ${{ env.INSTANCE1 }}
-#            uses: actions/download-artifact@v3
-          uses: dawidd6/action-download-artifact@v2
-          with:
-#              workflow: build-linux-arm-avh.yml
-            name: ${{ env.INSTANCE1 }}
-            path: ${{ github.workspace }}
-
-        - name: Download artifact ${{ env.INSTANCE2 }}
-        #            uses: actions/download-artifact@v3
-        uses: dawidd6/action-download-artifact@v2
-        with:
-        #              workflow: build-linux-arm-avh.yml
-            name: ${{ env.INSTANCE2 }}
-            path: ${{ github.workspace }}
-
-
-        - name: use files
-          run: |
-            pwd
-            ls
-            cat ${{ env.INSTANCE1}}
-            cat ${{ env.INSTANCE2}}
-            echo the end!
