@@ -19,17 +19,3 @@ jobs:
                 cd ronan
                 date >> test1.txt
                 who >> test2.txt
-              with:
-                path: ${{ github.workspace }}
-
-            - name: cache ${{ env.INSTANCE2 }}
-              uses: actions/cache@v3
-              with:
-                    path: path: ${{ github.workspace }}/ronan/test2.txt
-                    key: ${{ env.INSTANCE2 }}
-
-            - name: cache ${{ env.INSTANCE1 }}
-              uses: actions/cache@v3
-              with:
-                    path: path: ${{ github.workspace }}/ronan/test1.txt
-                    key: ${{ env.INSTANCE1}}
