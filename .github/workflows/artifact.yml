@@ -15,6 +15,7 @@ jobs:
         - name: create some files
           run: |
             pwd
+            rm -rf ronan
             # mkdir dave
             # cd dave
             date >> ${{ env.INSTANCE1}}
