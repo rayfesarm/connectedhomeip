@@ -34,6 +34,14 @@ jobs:
             # name: ${{ env.INSTANCE1 }}
             # path: ${{ github.workspace }}
 
+
+    downloadjob:
+        needs: uploadjob
+        runs-on: ubuntu-latest
+        env:
+            INSTANCE1: art1
+            INSTANCE2: art2
+        steps:
         - name: cache ${{ env.INSTANCE1 }}
           uses: actions/cache@v3
           with:
@@ -45,14 +53,6 @@ jobs:
           with:
             path: ${{ github.workspace }}
             key: ${{ env.INSTANCE2}}
-
-    downloadjob:
-        needs: uploadjob
-        runs-on: ubuntu-latest
-        env:
-            INSTANCE1: art1
-            INSTANCE2: art2
-        steps:
         - name: testing123
           run: |
             pwd
