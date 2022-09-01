@@ -116,8 +116,8 @@ jobs:
           ENDPOINT: https://app.avh.arm.com/api   
           API_TOKEN: ${{ secrets.API_TOKEN }}   
         steps:
-          - name: pull tests
-            uses: actions/checkout@v2
+        - name: pull tests
+          uses: actions/checkout@v2
 
         - name: Download artifact ${{ env.INSTANCE1 }}
           uses: actions/download-artifact@v2
@@ -130,79 +130,78 @@ jobs:
           with:
             name: ${{ env.INSTANCE2 }}
             path: ${{ github.workspace }}
+            
+        - name: Get OpenVPN websockets and other dependencies
+          run: |
+            sudo apt-get -y update
+            sudo apt -y install openvpn sshpass curl jq
+            pip install websockets asyncio
 
-          - name: Get OpenVPN websockets and other dependencies
-            run: |
-                sudo apt-get -y update
-                sudo apt -y install openvpn sshpass curl jq
-                pip install websockets asyncio
+        - name: pull avhcli utility
+          run: |
+            echo need to update repo link when available
+            # git clone https://github.com/ARM-software/avhcli.git
+            git clone https://github.com/RonanSynnottArm/avhcli.git
 
-          - name: pull avhcli utility
-            run: |
-              echo need to update repo link when available
-              # git clone https://github.com/ARM-software/avhcli.git
-              git clone https://github.com/RonanSynnottArm/avhcli.git
+        - name: Create INSTANCE2 [${{ env.INSTANCE2 }}] instance on AVH
+          run: |
+            avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL create
+            avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL start
 
-          - name: Create INSTANCE2 [${{ env.INSTANCE2 }}] instance on AVH
-            run: |             
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL create
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL start
+        - name: Create INSTANCE1 [${{ env.INSTANCE1 }}] instance on AVH
+          run: |
+            avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL create
+            avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL start
 
-          - name: Create INSTANCE1 [${{ env.INSTANCE1 }}] instance on AVH
-            run: |
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL create
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL start
-
-          - name: connect to AVH OpenVPN
-            run: |
-              sudo openvpn --config avhcli/avh.ovpn --daemon 
-              echo Connecting and ping-ing instances...
-              while ! ping -c 1 $(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"); do
+        - name: connect to AVH OpenVPN
+          run: |
+            sudo openvpn --config avhcli/avh.ovpn --daemon
+            echo Connecting and ping-ing instances...
+            while ! ping -c 1 $(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"); do
                 echo .
                 sleep 1
-              done
-              while ! ping -c 1 $(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"); do
+            done
+            while ! ping -c 1 $(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"); do
                 echo .
                 sleep 1
-              done
-              echo Connected
+            done
+            echo Connected
 
-          - name: scp binaries to RPi4 instances ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }}
-            if: ${{ env.MODEL == 'rpi4b' }}
-            run: |
-              sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
-              sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}
-              sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
-              sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}
+        - name: scp binaries to RPi4 instances ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }}
+          if: ${{ env.MODEL == 'rpi4b' }}
+          run: |
+            sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
+            sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}
+            sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
+            sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}
 
-          - name: scp binaries to i.MX8M+ instances ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }}
-            if: ${{ env.MODEL == 'imx8mp-evk' }}
-            run: |
-              sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
-              sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}
-              sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
-              sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}             
-              
-          - name: chmod 755 python scripts
-            run: |
-              chmod 755 scripts/avh/ws.py
-              chmod 755 scripts/avh/web_socket_light_test.py
-              chmod 755 scripts/avh/web_socket_chip_tool_test.py
-              chmod 755 avhcli/ws.py
+        - name: scp binaries to i.MX8M+ instances ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }}
+          if: ${{ env.MODEL == 'imx8mp-evk' }}
+          run: |
+            sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
+            sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}
+            sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
+            sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}             
 
-          - name: Test ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} with WebSocket to console
-            run: |
-              
-              echo Starting lighting app
-              ./scripts/avh/web_socket_light_test.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt")
-              echo invoke chip-tool commands
-              ./scripts/avh/web_socket_chip_tool_test.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
-              sleep 20
+        - name: chmod 755 python scripts
+          run: |
+            chmod 755 scripts/avh/ws.py
+            chmod 755 scripts/avh/web_socket_light_test.py
+            chmod 755 scripts/avh/web_socket_chip_tool_test.py
+            chmod 755 avhcli/ws.py
 
-          - name: Stopping/Deleting ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} 
-            run: | 
-              sudo killall openvpn
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL delete
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL delete
-              # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL stop
-              # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL stop
+        - name: Test ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} with WebSocket to console
+          run: |
+            echo Starting lighting app
+            ./scripts/avh/web_socket_light_test.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt")
+            echo invoke chip-tool commands
+            ./scripts/avh/web_socket_chip_tool_test.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
+            sleep 20
+
+        - name: Stopping/Deleting ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} 
+          run: | 
+            sudo killall openvpn
+            avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL delete
+            avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL delete
+            # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL stop
+            # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL stop
