@@ -17,8 +17,8 @@ jobs:
                 pwd
                 mkdir ronan
                 cd ronan
-                date >> lighting-app.txt
-                who >> chip-tool.txt
+                date >> lighting-app
+                who >> chip-tool
                 pwd
                 ls
 
