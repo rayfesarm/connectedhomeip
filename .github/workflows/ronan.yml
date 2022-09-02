@@ -94,24 +94,31 @@ jobs:
               
           - name: chmod 755 python scripts
             run: |
-              chmod 755 scripts/avh/ws.py
-              chmod 755 scripts/avh/web_socket_light_test.py
-              chmod 755 scripts/avh/web_socket_chip_tool_test.py
-              chmod 755 avhcli/ws.py
+                chmod 755 scripts/avh/ws.py
+                chmod 755 scripts/avh/web_socket_light_test.py
+                chmod 755 scripts/avh/web_socket_chip_tool_test.py
+                chmod 755 avhcli/ws.py
 
           - name: Starting ${{ env.INSTANCE2 }} with WebSocket
-            run: ./scripts/avh/web_socket_light_test.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt")
+            run: |
+                ./scripts/avh/web_socket_light_test.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt")
+                # wait for ${{ env.INSTANCE2 }} to initialize
+                sleep 40
 
           - name: Using ${{ env.INSTANCE1 }} with WebSocket
-            run: ./scripts/avh/web_socket_chip_tool_test.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
+            run: |
+                ./scripts/avh/web_socket_chip_tool_test.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
+                sleep 40
 
           - name: Kill ${{ env.INSTANCE2 }} with Ctrl_C
-            run: ./scripts/avh/ws.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt") '\x03'
+            run: |
+                ./scripts/avh/ws.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt") '\x03'
+                sleep 2
 
           - name: Stopping/Deleting ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} 
-            run: | 
-              sudo killall openvpn
-              # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL delete
-              # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL delete
-              # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL stop
-              # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL stop
+            run: |
+                sudo killall openvpn
+                # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL delete
+                # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL delete
+                # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL stop
+                # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL stop
