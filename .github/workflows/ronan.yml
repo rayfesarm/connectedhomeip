@@ -111,7 +111,7 @@ jobs:
 
           - name: Kill ${{ env.INSTANCE2 }} with Ctrl_C
             run: |
-                ./scripts/avh/ws.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt") b\x03
+                ./scripts/avh/ws.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt") b'\x03'\n
                 sleep 2
 
           - name: Stopping/Deleting ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} 
