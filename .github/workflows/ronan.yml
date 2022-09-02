@@ -70,11 +70,11 @@ jobs:
                 echo .
                 sleep 1
               done
-              while ! ping -c 1 $(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"); do
-                echo .
-                sleep 1
-              done
-              echo Connected
+              # while ! ping -c 1 $(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"); do
+                # echo .
+                # sleep 1
+              # done
+              # echo Connected
 
           # - name: scp binaries to RPi4 instances ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }}
             # if: ${{ env.MODEL == 'rpi4b' }}
@@ -102,17 +102,16 @@ jobs:
           - name: Starting ${{ env.INSTANCE2 }} with WebSocket
             run: |
                 ./scripts/avh/web_socket_light_test.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt")
-                # wait for ${{ env.INSTANCE2 }} to initialize
-                sleep 40
 
-          - name: Using ${{ env.INSTANCE1 }} with WebSocket
-            run: |
-                ./scripts/avh/web_socket_chip_tool_test.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
-                sleep 40
+
+          # - name: Using ${{ env.INSTANCE1 }} with WebSocket
+            # run: |
+                # ./scripts/avh/web_socket_chip_tool_test.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
+                # sleep 40
 
           - name: Kill ${{ env.INSTANCE2 }} with Ctrl_C
             run: |
-                ./scripts/avh/ws.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt") '\x03'
+                ./scripts/avh/ws.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt") '^C\n'
                 sleep 2
 
           - name: Stopping/Deleting ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} 

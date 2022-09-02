@@ -47,9 +47,9 @@ async def configureInstance():
           return True
         
     elif stage == 2:
-        await asyncio.sleep(1)
+        await sleep(1000)
         await console.send('./chip-lighting-app\n')
-        await asyncio.sleep(1)
+        await sleep(1000)
         stage += 1
     else:
         done = True
