@@ -42,7 +42,7 @@ jobs:
 
           - name: Get OpenVPN websockets and other dependencies
             run: |
-                sudo apt-get -y update
+                # sudo apt-get -y update
                 sudo apt -y install openvpn sshpass curl jq
                 pip install websockets asyncio
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import asyncio
+import time
 import re
 from websockets import client as ws
 import sys
