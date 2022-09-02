@@ -101,7 +101,7 @@ jobs:
 
           - name: Starting ${{ env.INSTANCE2 }} with WebSocket
             run: |
-                timeout 20 ./scripts/avh/web_socket_light_test.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt")
+                ./scripts/avh/web_socket_light_test.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt")
                 sleep 5
 
 
