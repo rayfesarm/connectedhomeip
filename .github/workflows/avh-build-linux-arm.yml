@@ -1,4 +1,4 @@
-# Copyright (c) 2020 Project CHIP Authors
+# Copyright (c) 2022 Project CHIP Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ name: Build Matter Linux examples for Arm Virtual Hardware
 # You will need an Arm Virtual Hardware login to run successfully
 # To generate API_TOKEN, go to Profile > API > Generate in AVH browser window.
 # Recommended to specify as API_TOKEN secret
+#
+# See also scripts/avh directory
 
 on:
     # push:

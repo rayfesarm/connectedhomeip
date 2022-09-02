@@ -1,4 +1,4 @@
-# Copyright (c) 2020 Project CHIP Authors
+# Copyright (c) 2022 Project CHIP Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ name: Build and run Matter Linux examples for Arm Virtual Hardware
 # You will need an Arm Virtual Hardware login to run successfully
 # To generate API_TOKEN, go to Profile > API > Generate in AVH browser window.
 # Recommended to specify as API_TOKEN secret
+#
+# See also scripts/avh directory
 
 on:
     # push:
@@ -101,7 +103,7 @@ jobs:
     virtual-device-test:
         needs: arm_crosscompile
         runs-on: ubuntu-latest
-# MODEL should be one of imx8mp-evk, rpi4b (or stm32u5-b-u585i-iot02a)
+# MODEL should be one of rpi4b or imx8mp-evk
 #        env:
 #          MODEL: ${{ secrets.MODEL }} 
 #          INSTANCE1: ${{ secrets.INSTANCE1 }} 

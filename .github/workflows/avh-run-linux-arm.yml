@@ -1,4 +1,4 @@
-# Copyright (c) 2020 Project CHIP Authors
+# Copyright (c) 2022 Project CHIP Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,9 +23,11 @@ name: Run Matter Linux examples on Arm Virtual Hardware
 # You will need an Arm Virtual Hardware login to run successfully
 # To generate API_TOKEN, go to Profile > API > Generate in AVH browser window.
 # Recommended to specify as API_TOKEN secret
+#
+# See also scripts/avh directory
 
 on:
-    # push:
+    push:
     # pull_request:
     workflow_dispatch:
 
@@ -37,7 +39,7 @@ concurrency:
 jobs:
     virtual-device-test:
         runs-on: ubuntu-latest
-# MODEL should be one of imx8mp-evk, rpi4b (or stm32u5-b-u585i-iot02a)
+# MODEL should be one of rpi4b or imx8mp-evk
 #        env:
 #          MODEL: ${{ secrets.MODEL }} 
 #          INSTANCE1: ${{ secrets.INSTANCE1 }} 
@@ -45,8 +47,8 @@ jobs:
 #          ENDPOINT: ${{ secrets.ENDPOINT }}
 #          API_TOKEN: ${{ secrets.API_TOKEN }} 
         env:
-          MODEL: imx8mp-evk
-          # MODEL: rpi4b
+          # MODEL: imx8mp-evk
+          MODEL: rpi4b
           INSTANCE1: chip-tool
           INSTANCE2: chip-lighting-app
           ENDPOINT: https://app.avh.arm.com/api   
@@ -137,7 +139,9 @@ jobs:
               ./scripts/avh/web_socket_light_test.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt")
               echo invoke chip-tool commands
               ./scripts/avh/web_socket_chip_tool_test.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
-              sleep 20
+              echo Get lighting app console out
+              ./scripts/avh/ws.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt") n
+              sleep 5
 
           - name: Stopping/Deleting ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} 
             run: | 
