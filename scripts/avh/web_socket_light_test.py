@@ -49,7 +49,7 @@ async def configureInstance():
         
     elif stage == 2:
         time.sleep(1)
-        await console.send('timeout 20 ./chip-lighting-app\n')
+        await console.send('timeout 90 ./chip-lighting-app\n')
         time.sleep(1)
         stage += 1
     else:

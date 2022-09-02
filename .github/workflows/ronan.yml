@@ -1,7 +1,7 @@
 name: Ronan testing
 
 on:
-    push:
+    # push:
     # pull_request:
     workflow_dispatch:
 

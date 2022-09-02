@@ -48,16 +48,17 @@ async def configureInstance():
           return True
 
     elif stage == 2:
-        await sleep(500)
+        print("Waiting for lighting-app to initialize")
+        time.sleep(40)
         print("Pairing")
         await console.send('./chip-tool pairing onnetwork-long 0x11 20202021 3840\n')
-        await sleep(1000)
+        time.sleep(5)
         print("Turning light on")
         await console.send('./chip-tool onoff on 0x11 1\n')
-        await asyncio.sleep(10)
+        time.sleep(5)
         print("Turning light off")
         await console.send('./chip-tool onoff off 0x11 1\n')
-        await asyncio.sleep(10)
+        time.sleep(5)
         stage += 1
     else:
         done = True
