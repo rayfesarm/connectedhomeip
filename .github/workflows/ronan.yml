@@ -106,8 +106,8 @@ jobs:
               ./scripts/avh/web_socket_light_test.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt")
               echo invoke chip-tool commands
               ./scripts/avh/web_socket_chip_tool_test.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
-              echo Get lighting app console out
-              ./scripts/avh/ws.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt") '\n'
+              echo Kill lighting app (Ctrl+C == 0x03)
+              ./scripts/avh/ws.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt") '\x03'
               sleep 5
 
           - name: Stopping/Deleting ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} 
@@ -115,5 +115,5 @@ jobs:
               sudo killall openvpn
               # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL delete
               # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL delete
-              # # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL stop
-              # # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL stop
+              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL stop
+              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL stop

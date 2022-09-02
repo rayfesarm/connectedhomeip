@@ -139,9 +139,9 @@ jobs:
               ./scripts/avh/web_socket_light_test.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt")
               echo invoke chip-tool commands
               ./scripts/avh/web_socket_chip_tool_test.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
-              echo Get lighting app console out
-              ./scripts/avh/ws.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt") '\n'
-              sleep 5
+              echo Kill lighting-app
+              ./scripts/avh/ws.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt") '\x03'
+              sleep 3
 
           - name: Stopping/Deleting ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} 
             run: | 

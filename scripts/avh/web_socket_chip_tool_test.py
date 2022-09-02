@@ -47,8 +47,6 @@ async def configureInstance():
           return True
 
     elif stage == 2:
-        # First wait for chip-lighting-app to initialize
-        await asyncio.sleep(40)
         print("Pairing")
         await console.send('./chip-tool pairing onnetwork-long 0x11 20202021 3840\n')
         await asyncio.sleep(10)
