@@ -18,8 +18,8 @@ async def main():
         await websocket.send(cmd)
         if newline:
             await websocket.send("\n")
-        answer = await websocket.recv()
-        print(answer)      
+#        answer = await websocket.recv()
+#        print(answer)      
 
         websocket.close_timeout = 1
         await websocket.close()

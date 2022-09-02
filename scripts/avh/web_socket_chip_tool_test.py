@@ -55,6 +55,7 @@ async def configureInstance():
         await asyncio.sleep(10)
         print("Turning light off")
         await console.send('./chip-tool onoff off 0x11 1\n')
+        await asyncio.sleep(10)
         stage += 1
     else:
         done = True

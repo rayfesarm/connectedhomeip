@@ -24,21 +24,21 @@ jobs:
           - name: pull tests
             uses: actions/checkout@v2
 
-          # - name: Download artifact ${{ env.INSTANCE1 }}
-# #            uses: actions/download-artifact@v3
-            # uses: dawidd6/action-download-artifact@v2
-            # with:
-              # workflow: build-linux-arm-avh.yml
-              # name: ${{ env.INSTANCE1 }}
-              # path: ${{ github.workspace }}
+          - name: Download artifact ${{ env.INSTANCE1 }}
+#            uses: actions/download-artifact@v3
+            uses: dawidd6/action-download-artifact@v2
+            with:
+              workflow: build-linux-arm-avh.yml
+              name: ${{ env.INSTANCE1 }}
+              path: ${{ github.workspace }}
 
-          # - name: Download artifact ${{ env.INSTANCE2 }}
-# #            uses: actions/download-artifact@v3
-            # uses: dawidd6/action-download-artifact@v2
-            # with:
-              # workflow: build-linux-arm-avh.yml
-              # name: ${{ env.INSTANCE2 }}
-              # path: ${{ github.workspace }}                                      
+          - name: Download artifact ${{ env.INSTANCE2 }}
+#            uses: actions/download-artifact@v3
+            uses: dawidd6/action-download-artifact@v2
+            with:
+              workflow: build-linux-arm-avh.yml
+              name: ${{ env.INSTANCE2 }}
+              path: ${{ github.workspace }}                                      
 
           - name: Get OpenVPN websockets and other dependencies
             run: |
@@ -76,21 +76,21 @@ jobs:
               done
               echo Connected
 
-          # - name: scp binaries to RPi4 instances ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }}
-            # if: ${{ env.MODEL == 'rpi4b' }}
-            # run: |
-              # sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
-              # sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}
-              # sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
-              # sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}
+          - name: scp binaries to RPi4 instances ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }}
+            if: ${{ env.MODEL == 'rpi4b' }}
+            run: |
+              sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
+              sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}
+              sshpass -p raspberry scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
+              sshpass -p raspberry ssh -o StrictHostKeyChecking=no pi@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}
 
-          # - name: scp binaries to i.MX8M+ instances ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }}
-            # if: ${{ env.MODEL == 'imx8mp-evk' }}
-            # run: |
-              # sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
-              # sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}
-              # sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
-              # sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}             
+          - name: scp binaries to i.MX8M+ instances ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }}
+            if: ${{ env.MODEL == 'imx8mp-evk' }}
+            run: |
+              sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE1 }} root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt"):~/
+              sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE1 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE1 }}
+              sshpass scp -o StrictHostKeyChecking=no ${{ env.INSTANCE2 }} root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt"):~/
+              sshpass ssh -o StrictHostKeyChecking=no root@$(cat "./avhcli/${{ env.INSTANCE2 }}_lan_ip.txt") chmod 755 ${{ env.INSTANCE2 }}             
               
           - name: chmod 755 python scripts
             run: |
@@ -115,5 +115,5 @@ jobs:
               sudo killall openvpn
               # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL delete
               # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL delete
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL stop
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL stop
+              # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL stop
+              # avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL stop
