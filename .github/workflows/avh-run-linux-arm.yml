@@ -140,13 +140,13 @@ jobs:
               echo invoke chip-tool commands
               ./scripts/avh/web_socket_chip_tool_test.py $(cat "./avhcli/${{ env.INSTANCE1 }}_console.txt")
               echo Get lighting app console out
-              ./scripts/avh/ws.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt") n
+              ./scripts/avh/ws.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt") '\n'
               sleep 5
 
           - name: Stopping/Deleting ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} 
             run: | 
               sudo killall openvpn
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL delete
-              avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL delete
+              #avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL delete
+              #avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL delete
               #avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE1 -m $MODEL stop
               #avhcli/avhcli.sh -t $API_TOKEN -n $INSTANCE2 -m $MODEL stop
