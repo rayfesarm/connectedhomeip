@@ -102,6 +102,7 @@ jobs:
           - name: Starting ${{ env.INSTANCE2 }} with WebSocket
             run: |
                 ./scripts/avh/web_socket_light_test.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt")
+                sleep 3
 
 
           # - name: Using ${{ env.INSTANCE1 }} with WebSocket
@@ -111,7 +112,7 @@ jobs:
 
           - name: Kill ${{ env.INSTANCE2 }} with Ctrl_C
             run: |
-                ./scripts/avh/ws.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt") b'\x03'\n
+                ./scripts/avh/ws.py $(cat "./avhcli/${{ env.INSTANCE2 }}_console.txt") "b'\x03'\n"
                 sleep 2
 
           - name: Stopping/Deleting ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} 
