@@ -132,7 +132,6 @@ jobs:
               chmod 755 scripts/avh/ws.py
               chmod 755 scripts/avh/web_socket_light_test.py
               chmod 755 scripts/avh/web_socket_chip_tool_test.py
-              chmod 755 avhcli/ws.py
 
           - name: Test ${{ env.INSTANCE1 }} and ${{ env.INSTANCE2 }} with WebSocket to console
             run: |
