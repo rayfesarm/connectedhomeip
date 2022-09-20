@@ -138,12 +138,14 @@ jobs:
             sudo apt-get -y update
             sudo apt -y install openvpn sshpass curl jq
             pip install websockets asyncio
-
-        - name: pull avhcli utility
+            
+        - name: pull latest avhcli utility
           run: |
             echo need to update repo link when available
-            # git clone https://github.com/ARM-software/avhcli.git
-            git clone https://github.com/RonanSynnottArm/avhcli.git
+            echo for now use copy in scripts/avh folder
+            mkdir avhcli
+            cp scripts/avh/avhcli.sh avhcli/avhcli.sh
+            chmod 777 avhcli/avhcli.sh
 
         - name: Create INSTANCE2 [${{ env.INSTANCE2 }}] instance on AVH
           run: |
