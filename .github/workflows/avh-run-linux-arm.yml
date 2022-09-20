@@ -13,7 +13,7 @@
 # limitations under the License.
 
 name: Run Matter Linux examples on Arm Virtual Hardware
-# Requires build-linux-arm-avh.yml workflow to have been run
+# Requires avh-build-linux-arm.yml workflow to have been run
 
 # Example workflow using Arm Virtual Hardware (AVH) targets for testing
 # See https://avh.arm.com for more info
@@ -61,7 +61,7 @@ jobs:
 #            uses: actions/download-artifact@v3
             uses: dawidd6/action-download-artifact@v2
             with:
-              workflow: build-linux-arm-avh.yml
+              workflow: avh-build-linux-arm.yml
               name: ${{ env.INSTANCE1 }}
               path: ${{ github.workspace }}
 
@@ -69,7 +69,7 @@ jobs:
 #            uses: actions/download-artifact@v3
             uses: dawidd6/action-download-artifact@v2
             with:
-              workflow: build-linux-arm-avh.yml
+              workflow: avh-build-linux-arm.yml
               name: ${{ env.INSTANCE2 }}
               path: ${{ github.workspace }}                                      
 
