@@ -13,6 +13,7 @@
 # limitations under the License.
 
 name: Run Matter Linux examples on Arm Virtual Hardware
+
 # Requires avh-build-linux-arm.yml workflow to have been run
 
 # Example workflow using Arm Virtual Hardware (AVH) targets for testing
@@ -47,8 +48,8 @@ jobs:
 #          ENDPOINT: ${{ secrets.ENDPOINT }}
 #          API_TOKEN: ${{ secrets.API_TOKEN }} 
         env:
-          MODEL: imx8mp-evk
-          # MODEL: rpi4b
+          # MODEL: imx8mp-evk
+          MODEL: rpi4b
           INSTANCE1: chip-tool
           INSTANCE2: chip-lighting-app
           ENDPOINT: https://app.avh.arm.com/api   
