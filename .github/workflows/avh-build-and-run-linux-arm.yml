@@ -111,8 +111,8 @@ jobs:
 #          ENDPOINT: ${{ secrets.ENDPOINT }}
 #          API_TOKEN: ${{ secrets.API_TOKEN }} 
         env:
-          # MODEL: imx8mp-evk
-          MODEL: rpi4b
+          MODEL: imx8mp-evk
+          # MODEL: rpi4b
           INSTANCE1: chip-tool
           INSTANCE2: chip-lighting-app
           ENDPOINT: https://app.avh.arm.com/api   
