@@ -100,12 +100,12 @@ jobs:
               with:
                     name: ${{ env.INSTANCE2 }}
                     path: ${{ github.workspace }}/out/linux-arm64-clang-light/chip-lighting-app
-                    retention-days: 5
+                    retention-days: 10
 
             - name: upload ${{ env.INSTANCE1 }}
               uses: actions/upload-artifact@v3
               with:
                     name: ${{ env.INSTANCE1 }}
                     path: ${{ github.workspace }}/out/linux-arm64-clang-chip-tool-no-interactive/chip-tool
-                    retention-days: 5
+                    retention-days: 10
 
