@@ -28,7 +28,7 @@ name: Run Matter Linux examples on Arm Virtual Hardware
 # See also scripts/avh directory
 
 on:
-    push:
+    # push:
     # pull_request:
     workflow_dispatch:
 
