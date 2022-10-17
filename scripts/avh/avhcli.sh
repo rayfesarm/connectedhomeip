@@ -227,7 +227,7 @@ start_instance() {
     sleep 2
     STATUS=$(eval $CMD)
   done
-  printf "\rInstance is ready\n"
+  printf "\rInstance $MODEL is ready\n"
 }
 
 # Stop instance
